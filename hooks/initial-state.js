@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Stitch,
   AnonymousCredential,
@@ -44,4 +45,6 @@ const getInitialState = async () => {
   }
 };
 
-export { getInitialState, blankState };
+const StateContext = React.createContext();
+
+export { getInitialState, blankState, StateContext };
