@@ -1,8 +1,9 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
-import { blankState, StateContext } from "./hooks/initial-state";
+import { StyleSheet, View } from "react-native";
+import { blankState, StateContext } from "./database-service/database-service";
 import { useListReducer } from "./hooks/list-reducer";
 import { ActiveListItems } from "./components/active-list-items";
+import { AddItems } from "./components/store-header";
 
 const App = () => {
   return (

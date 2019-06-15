@@ -1,13 +1,16 @@
 import React, { useEffect, useContext } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { getInitialState, StateContext } from "../hooks/initial-state";
 import Swipeout from "react-native-swipeout";
+import DatabaseService, {
+  StateContext
+} from "../database-service/database-service";
+import { StoreHeader } from "./store-header";
 
 const ActiveListItems = () => {
   const { state, initialFetch, fetchItems } = useContext(StateContext);
   useEffect(() => {
     (async () => {
-      initialFetch(await getInitialState());
+      initialFetch(await DatabaseService.getInitialState());
     })();
 
     return () => {
@@ -25,7 +28,7 @@ const ActiveListItems = () => {
   const activeListItems = state.stores.map(store => {
     return (
       <React.Fragment key={store.storeName}>
-        <Text style={styles.storeName}>{store.storeName}</Text>
+        <StoreHeader store={store} />
 
         {store.items
           .filter(item => item.isActive === true)
@@ -37,11 +40,12 @@ const ActiveListItems = () => {
                   color: "#ff0000",
 
                   onPress: async () => {
-                    await updateItemsFromStore({
+                    await DatabaseService.updateItemsFromStore({
+                      state,
                       storeName: store.storeName,
                       items: [item.name]
                     });
-                    fetchItems(await fetchStores());
+                    fetchItems(await DatabaseService.fetchStores(state));
                   }
                 }
               ]}
@@ -57,52 +61,6 @@ const ActiveListItems = () => {
     );
   });
 
-  const fetchStores = async () => {
-    const stores = await state.collection.find({}).asArray();
-    return stores;
-  };
-
-  const updateItemsFromStore = async ({ storeName, items }) => {
-    let store = state.stores.find(store => store.storeName === storeName);
-
-    if (store) {
-      items.forEach(newItem => {
-        if (!store.items.find(existingItem => existingItem.name === newItem)) {
-          store.items.push({
-            name: newItem,
-            isActive: true
-          });
-          console.log(`${newItem} added to ${storeName} list\n`);
-        } else {
-          let item = store.items.find(item => item.name === newItem);
-          item.isActive = !item.isActive;
-          console.log(
-            `${item.name} ${
-              !item.isActive ? "removed from " : "added to "
-            }${storeName} list\n`
-          );
-        }
-      });
-    } else {
-      store = {
-        storeName,
-        items: items.map(item => {
-          return {
-            name: item,
-            isActive: true
-          };
-        })
-      };
-      console.log(`${items} added to ${storeName} list\n`);
-    }
-
-    await state.collection.updateOne(
-      { storeName },
-      { $set: store },
-      { upsert: true }
-    );
-  };
-
   return !state.isLoading ? (
     <>
       <Text>----ACTIVE ITEMS-----</Text>
@@ -116,11 +74,6 @@ const ActiveListItems = () => {
 export { ActiveListItems };
 
 const styles = StyleSheet.create({
-  storeName: {
-    fontWeight: "bold",
-    fontSize: 25,
-    marginTop: 10
-  },
   itemContainer: {
     padding: 5
   }
