@@ -1,49 +1,41 @@
 import React, { useContext, useState } from "react";
 import { StateContext } from "../database-service/database-service";
-import {
-  StyleSheet,
-  TextInput,
-  View,
-  TouchableOpacity,
-  Text
-} from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text, Button } from "react-native";
+import { NewItemField } from "./new-item-field";
 
 const StoreHeader = ({ store }) => {
   const { state } = useContext(StateContext);
-  const [userInput, setInput] = useState("");
-  const [isInputVisible, toggleInput] = useState(false);
+  const [newItemsList, setList] = useState([]);
+  const [inputFields, setInputFields] = useState([]);
 
   return (
     <>
       <View style={styles.header}>
-        <Text style={styles.storeName}>{store.storeName}</Text>
+        <View>
+          <Text style={styles.storeName}>{store.storeName}</Text>
+        </View>
         <TouchableOpacity
           style={styles.toggleInputButton}
           onPress={() => {
-            toggleInput(!isInputVisible);
-            setInput("");
+            let newInputFields = [...inputFields];
+            newInputFields.push(
+              <NewItemField setList={setList} newItemsList={newItemsList} />
+            );
+            setInputFields(newInputFields);
           }}
+          accessible={true}
         >
           <View style={styles.buttonTextContainer}>
-            <Text
-              style={isInputVisible ? styles.buttonClose : styles.buttonOpen}
-            >
-              {isInputVisible ? "x" : "+"}
-            </Text>
+            <Text style={styles.buttonOpen}>{"+"}</Text>
           </View>
         </TouchableOpacity>
       </View>
-      {isInputVisible && (
-        <TextInput
-          style={styles.input}
-          value={userInput}
-          onChangeText={text => setInput(text)}
-          autoFocus={true}
-          placeholder={"ex: Bananas, Cereal, Bread..."}
-          placeholderTextColor={"gray"}
-          onBlur={() => {
-            toggleInput(!isInputVisible);
-            setInput("");
+      {inputFields && inputFields.map(input => input)}
+      {newItemsList && (
+        <Button
+          title={`Add ${newItemsList.join(", ")} to ${store.storeName} list`}
+          onPress={() => {
+            console.log(newItemsList);
           }}
         />
       )}
@@ -53,10 +45,17 @@ const StoreHeader = ({ store }) => {
 
 const styles = StyleSheet.create({
   header: {
+    flex: 1,
+    justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",
     marginTop: 10,
-    marginBottom: 10
+    marginBottom: 10,
+    paddingLeft: 5,
+    paddingRight: 5,
+    borderColor: "#DDDDDD",
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5
   },
   input: {
     maxWidth: 100,

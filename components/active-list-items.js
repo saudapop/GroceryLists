@@ -1,5 +1,14 @@
-import React, { useEffect, useContext } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useState, useEffect, useContext } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  RefreshControl,
+  ActivityIndicator
+} from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 import Swipeout from "react-native-swipeout";
 import DatabaseService, {
   StateContext
@@ -7,7 +16,9 @@ import DatabaseService, {
 import { StoreHeader } from "./store-header";
 
 const ActiveListItems = () => {
-  const { state, initialFetch, fetchItems } = useContext(StateContext);
+  const { state, initialFetch, fetchItems, setLoading } = useContext(
+    StateContext
+  );
   useEffect(() => {
     (async () => {
       initialFetch(await DatabaseService.getInitialState());
@@ -24,7 +35,6 @@ const ActiveListItems = () => {
         });
     };
   }, []);
-
   const activeListItems = state.stores.map(store => {
     return (
       <React.Fragment key={store.storeName}>
@@ -32,13 +42,16 @@ const ActiveListItems = () => {
 
         {store.items
           .filter(item => item.isActive === true)
-          .map(item => (
+          .map((item, i) => (
             <Swipeout
+              key={item.name}
+              style={styles.itemContainer}
+              backgroundColor={i % 2 ? "#edf7ff" : "#c4def2"}
+              buttonWidth={20}
               right={[
                 {
-                  text: "Remove",
-                  color: "#ff0000",
-
+                  text: "X",
+                  type: "delete",
                   onPress: async () => {
                     await DatabaseService.updateItemsFromStore({
                       state,
@@ -52,9 +65,7 @@ const ActiveListItems = () => {
               key={item.name}
               autoClose={true}
             >
-              <View style={styles.itemContainer}>
-                <Text>{item.name}</Text>
-              </View>
+              <Text style={styles.itemName}>{item.name}</Text>
             </Swipeout>
           ))}
       </React.Fragment>
@@ -62,19 +73,53 @@ const ActiveListItems = () => {
   });
 
   return !state.isLoading ? (
-    <>
-      <Text>----ACTIVE ITEMS-----</Text>
-      {state.stores.length && activeListItems}
-    </>
+    <ScrollView
+      keyboardShouldPersistTaps="never"
+      refreshControl={
+        <RefreshControl
+          refreshing={state.isLoading}
+          onRefresh={() => {
+            setLoading();
+            setTimeout(
+              async () => fetchItems(await DatabaseService.fetchStores(state)),
+              1500
+            );
+          }}
+        />
+      }
+    >
+      <KeyboardAwareScrollView style={styles.scrollContainer}>
+        {state.stores.length && activeListItems}
+      </KeyboardAwareScrollView>
+    </ScrollView>
   ) : (
-    <Text>LOADING. WAIT PLEASE. JEEZE</Text>
+    <View style={styles.loading}>
+      <ActivityIndicator size="large" color="green" />
+      <Text> Loading! Please wait! Jazzakallah Khair 😁</Text>
+    </View>
   );
 };
 
 export { ActiveListItems };
 
 const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  scrollContainer: {
+    flex: 1,
+    marginTop: 75,
+    backgroundColor: "#fff"
+  },
   itemContainer: {
-    padding: 5
+    marginTop: 5,
+    paddingLeft: 30,
+    borderTopWidth: 0.15,
+    borderBottomWidth: 0.15
+  },
+  itemName: {
+    fontSize: 20
   }
 });

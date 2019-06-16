@@ -10,6 +10,7 @@
     "mongodb-stitch-react-native-sdk": "^4.4.0",
     "react": "16.8.3",
     "react-native": "0.59.8",
+    "react-native-keyboard-aware-scroll-view": "^0.8.0",
     "react-native-swipeout": "^2.3.6"
   },
   "devDependencies": {
