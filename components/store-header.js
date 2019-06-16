@@ -1,5 +1,7 @@
 import React, { useContext, useState } from "react";
-import { StateContext } from "../database-service/database-service";
+import DatabaseService, {
+  StateContext
+} from "../database-service/database-service";
 import { StyleSheet, View, TouchableOpacity, Text, Button } from "react-native";
 import { NewItemField } from "./new-item-field";
 
@@ -31,7 +33,7 @@ const StoreHeader = ({ store }) => {
         </TouchableOpacity>
       </View>
       {inputFields && inputFields.map(input => input)}
-      {newItemsList && (
+      {newItemsList[0] && (
         <Button
           title={`Add ${newItemsList.join(", ")} to ${store.storeName} list`}
           onPress={() => {
@@ -53,6 +55,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingLeft: 5,
     paddingRight: 5,
+    backgroundColor: "#DEDEDE",
     borderColor: "#DDDDDD",
     borderTopWidth: 0.5,
     borderBottomWidth: 0.5

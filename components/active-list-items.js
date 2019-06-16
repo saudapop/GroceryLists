@@ -10,19 +10,15 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import Swipeout from "react-native-swipeout";
-import DatabaseService, {
-  StateContext
-} from "../database-service/database-service";
+import { StateContext } from "../database-service/database-service";
 import { StoreHeader } from "./store-header";
 
 const ActiveListItems = () => {
-  const { state, initialFetch, fetchItems, setLoading } = useContext(
+  const { state, initialFetch, updateItems, refresh } = useContext(
     StateContext
   );
   useEffect(() => {
-    (async () => {
-      initialFetch(await DatabaseService.getInitialState());
-    })();
+    initialFetch();
 
     return () => {
       state.client.auth
@@ -35,42 +31,43 @@ const ActiveListItems = () => {
         });
     };
   }, []);
-  const activeListItems = state.stores.map(store => {
-    return (
-      <React.Fragment key={store.storeName}>
-        <StoreHeader store={store} />
 
-        {store.items
-          .filter(item => item.isActive === true)
-          .map((item, i) => (
-            <Swipeout
-              key={item.name}
-              style={styles.itemContainer}
-              backgroundColor={i % 2 ? "#edf7ff" : "#c4def2"}
-              buttonWidth={20}
-              right={[
-                {
-                  text: "X",
-                  type: "delete",
-                  onPress: async () => {
-                    await DatabaseService.updateItemsFromStore({
-                      state,
-                      storeName: store.storeName,
-                      items: [item.name]
-                    });
-                    fetchItems(await DatabaseService.fetchStores(state));
+  const activeListItems = state.stores
+    .sort((a, b) => a.storeName > b.storeName)
+    .map(store => {
+      return (
+        <React.Fragment key={store.storeName}>
+          <StoreHeader store={store} />
+
+          {store.items
+            .filter(item => item.isActive === true)
+            .map((item, i) => (
+              <Swipeout
+                key={item.name}
+                style={{
+                  ...styles.itemContainer,
+                  backgroundColor: i % 2 ? "#edf7ff" : "#c4def2"
+                }}
+                buttonWidth={20}
+                right={[
+                  {
+                    type: "delete",
+                    component: (
+                      <View style={styles.swipeButton}>
+                        <Text style={styles.swipeButtonText}> X </Text>
+                      </View>
+                    ),
+                    onPress: async () =>
+                      updateItems({ store, items: item.name, state })
                   }
-                }
-              ]}
-              key={item.name}
-              autoClose={true}
-            >
-              <Text style={styles.itemName}>{item.name}</Text>
-            </Swipeout>
-          ))}
-      </React.Fragment>
-    );
-  });
+                ]}
+              >
+                <Text style={styles.itemName}>{item.name}</Text>
+              </Swipeout>
+            ))}
+        </React.Fragment>
+      );
+    });
 
   return !state.isLoading ? (
     <ScrollView
@@ -78,13 +75,7 @@ const ActiveListItems = () => {
       refreshControl={
         <RefreshControl
           refreshing={state.isLoading}
-          onRefresh={() => {
-            setLoading();
-            setTimeout(
-              async () => fetchItems(await DatabaseService.fetchStores(state)),
-              1500
-            );
-          }}
+          onRefresh={() => refresh(state)}
         />
       }
     >
@@ -114,10 +105,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff"
   },
   itemContainer: {
+    justifyContent: "center",
     marginTop: 5,
     paddingLeft: 30,
+    height: 35,
     borderTopWidth: 0.15,
     borderBottomWidth: 0.15
+  },
+  swipeButton: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  swipeButtonText: {
+    color: "white",
+    fontSize: 15
   },
   itemName: {
     fontSize: 20

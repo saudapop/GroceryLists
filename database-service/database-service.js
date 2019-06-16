@@ -24,13 +24,13 @@ const StateContext = React.createContext();
 
 export { blankState, StateContext };
 
-export default class DatabaseService {
-  static async fetchStores(state) {
+export default (DatabaseService = {
+  fetchStores: async state => {
     const stores = await state.collection.find({}).asArray();
     return stores;
-  }
+  },
 
-  static async getInitialState() {
+  getInitialState: async () => {
     try {
       initialState.client = await Stitch.initializeDefaultAppClient(
         STITCH_APP_NAME
@@ -51,9 +51,9 @@ export default class DatabaseService {
     } catch (err) {
       console.log(err);
     }
-  }
+  },
 
-  static async updateItemsFromStore({ state, storeName, items }) {
+  updateItemsFromStore: async ({ state, storeName, items }) => {
     let store = state.stores.find(store => store.storeName === storeName);
 
     if (store) {
@@ -93,4 +93,4 @@ export default class DatabaseService {
       { upsert: true }
     );
   }
-}
+});
