@@ -7,9 +7,15 @@ import {
   Text
 } from "react-native";
 
-export const NewItemField = ({ setList, newItemsList }) => {
+export const NewItemField = ({ newItemsList, setList, addNewInputField }) => {
   const [userInput, setInput] = useState("");
 
+  const confirmItem = () => {
+    if (userInput) {
+      setList([...newItemsList, userInput]);
+      addNewInputField();
+    }
+  };
   return (
     <View style={styles.container}>
       <TextInput
@@ -18,7 +24,7 @@ export const NewItemField = ({ setList, newItemsList }) => {
         onChangeText={text => setInput(text)}
         returnKeyType="done"
         enablesReturnKeyAutomatically
-        onEndEditing={() => setList([...newItemsList, userInput])}
+        onEndEditing={confirmItem}
         autoFocus={true}
         placeholder={"ex: Bananas..."}
         placeholderTextColor={"gray"}
@@ -26,16 +32,18 @@ export const NewItemField = ({ setList, newItemsList }) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={() => {
-            const listWithRemovedItem = newItemsList.filter(
-              item => item !== userInput
-            );
-            setInput("");
-            setList(listWithRemovedItem);
+            if (userInput) {
+              const listWithRemovedItem = newItemsList.filter(
+                item => item !== userInput
+              );
+              setInput("");
+              setList(listWithRemovedItem);
+            }
           }}
         >
           <Text>❌</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={confirmItem}>
           <Text>✅</Text>
         </TouchableOpacity>
       </View>

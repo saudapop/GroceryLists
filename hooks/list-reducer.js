@@ -42,7 +42,7 @@ const useListReducer = () => {
     await DatabaseService.updateItemsFromStore({
       state,
       storeName: store.storeName,
-      items: [items]
+      items
     });
     fetchItems(await DatabaseService.fetchStores(state));
   };

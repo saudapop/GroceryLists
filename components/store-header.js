@@ -6,9 +6,17 @@ import { StyleSheet, View, TouchableOpacity, Text, Button } from "react-native";
 import { NewItemField } from "./new-item-field";
 
 const StoreHeader = ({ store }) => {
-  const { state } = useContext(StateContext);
+  const { updateItems } = useContext(StateContext);
   const [newItemsList, setList] = useState([]);
   const [inputFields, setInputFields] = useState([]);
+
+  const addNewInputField = () => {
+    let newInputFields = [...inputFields];
+    newInputFields.push(
+      <NewItemField setList={setList} newItemsList={newItemsList} />
+    );
+    setInputFields(newInputFields);
+  };
 
   return (
     <>
@@ -18,13 +26,7 @@ const StoreHeader = ({ store }) => {
         </View>
         <TouchableOpacity
           style={styles.toggleInputButton}
-          onPress={() => {
-            let newInputFields = [...inputFields];
-            newInputFields.push(
-              <NewItemField setList={setList} newItemsList={newItemsList} />
-            );
-            setInputFields(newInputFields);
-          }}
+          onPress={addNewInputField}
           accessible={true}
         >
           <View style={styles.buttonTextContainer}>
@@ -37,7 +39,9 @@ const StoreHeader = ({ store }) => {
         <Button
           title={`Add ${newItemsList.join(", ")} to ${store.storeName} list`}
           onPress={() => {
-            console.log(newItemsList);
+            updateItems({ store, items: newItemsList });
+            setList([]);
+            setInputFields([]);
           }}
         />
       )}

@@ -58,7 +58,7 @@ const ActiveListItems = () => {
                       </View>
                     ),
                     onPress: async () =>
-                      updateItems({ store, items: item.name, state })
+                      updateItems({ store, items: [item.name], state })
                   }
                 ]}
               >
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     justifyContent: "center",
-    marginTop: 5,
+    marginTop: 3,
     paddingLeft: 30,
     height: 35,
     borderTopWidth: 0.15,
