@@ -7,13 +7,12 @@ import {
   Text
 } from "react-native";
 
-export const NewItemField = ({ newItemsList, setList, addNewInputField }) => {
+export const NewItemField = ({ newItemsList, setList }) => {
   const [userInput, setInput] = useState("");
 
   const confirmItem = () => {
     if (userInput) {
       setList([...newItemsList, userInput]);
-      addNewInputField();
     }
   };
   return (

@@ -1,7 +1,5 @@
-import React, { useContext, useState } from "react";
-import DatabaseService, {
-  StateContext
-} from "../database-service/database-service";
+import React, { useContext, useState, useEffect } from "react";
+import { StateContext } from "../database-service/database-service";
 import { StyleSheet, View, TouchableOpacity, Text, Button } from "react-native";
 import { NewItemField } from "./new-item-field";
 
@@ -9,14 +7,27 @@ const StoreHeader = ({ store }) => {
   const { updateItems } = useContext(StateContext);
   const [newItemsList, setList] = useState([]);
   const [inputFields, setInputFields] = useState([]);
+  const [isAddingNewItems, setIsAddingNewItems] = useState(false);
 
   const addNewInputField = () => {
-    let newInputFields = [...inputFields];
-    newInputFields.push(
-      <NewItemField setList={setList} newItemsList={newItemsList} />
-    );
-    setInputFields(newInputFields);
+    const isListEmpty = !newItemsList.length && inputFields.length < 1;
+    const needMoreInputs = newItemsList.length >= inputFields.length;
+
+    if (isListEmpty || needMoreInputs) {
+      let newInputFields = [...inputFields];
+      newInputFields.push(
+        <NewItemField newItemsList={newItemsList} setList={setList} />
+      );
+      setInputFields(newInputFields);
+      setIsAddingNewItems(true);
+    }
   };
+
+  useEffect(() => {
+    if (isAddingNewItems) {
+      addNewInputField();
+    }
+  }, [newItemsList]);
 
   return (
     <>
@@ -42,6 +53,7 @@ const StoreHeader = ({ store }) => {
             updateItems({ store, items: newItemsList });
             setList([]);
             setInputFields([]);
+            setIsAddingNewItems(false);
           }}
         />
       )}
