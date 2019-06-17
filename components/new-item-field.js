@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -6,10 +6,20 @@ import {
   TouchableOpacity,
   Text
 } from "react-native";
-
-export const NewItemField = ({ setList, newItemsList }) => {
+import { NewItemsContext } from "../hooks/new-items-reducer";
+export const NewItemField = () => {
   const [userInput, setInput] = useState("");
 
+  const { state, setList } = useContext(NewItemsContext);
+  const { newItemsList } = state;
+
+  const confirmItem = () => {
+    if (userInput) {
+      if (!(newItemsList.indexOf(userInput) > -1)) {
+        setList([...newItemsList, userInput]);
+      }
+    }
+  };
   return (
     <View style={styles.container}>
       <TextInput
@@ -18,7 +28,7 @@ export const NewItemField = ({ setList, newItemsList }) => {
         onChangeText={text => setInput(text)}
         returnKeyType="done"
         enablesReturnKeyAutomatically
-        onEndEditing={() => setList([...newItemsList, userInput])}
+        onEndEditing={confirmItem}
         autoFocus={true}
         placeholder={"ex: Bananas..."}
         placeholderTextColor={"gray"}
@@ -26,16 +36,18 @@ export const NewItemField = ({ setList, newItemsList }) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={() => {
-            const listWithRemovedItem = newItemsList.filter(
-              item => item !== userInput
-            );
-            setInput("");
-            setList(listWithRemovedItem);
+            if (userInput) {
+              const listWithRemovedItem = newItemsList.filter(
+                item => item !== userInput
+              );
+              setInput("");
+              setList(listWithRemovedItem);
+            }
           }}
         >
           <Text>❌</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={confirmItem}>
           <Text>✅</Text>
         </TouchableOpacity>
       </View>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,7 +12,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Swipeout from "react-native-swipeout";
 import { StateContext } from "../database-service/database-service";
 import { StoreHeader } from "./store-header";
-
 const ActiveListItems = () => {
   const { state, initialFetch, updateItems, refresh } = useContext(
     StateContext
@@ -38,7 +37,6 @@ const ActiveListItems = () => {
       return (
         <React.Fragment key={store.storeName}>
           <StoreHeader store={store} />
-
           {store.items
             .filter(item => item.isActive === true)
             .map((item, i) => (
@@ -58,7 +56,7 @@ const ActiveListItems = () => {
                       </View>
                     ),
                     onPress: async () =>
-                      updateItems({ store, items: item.name, state })
+                      updateItems({ store, items: [item.name], state })
                   }
                 ]}
               >
@@ -106,7 +104,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     justifyContent: "center",
-    marginTop: 5,
+    marginTop: 3,
     paddingLeft: 30,
     height: 35,
     borderTopWidth: 0.15,

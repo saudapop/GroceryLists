@@ -1,14 +1,49 @@
-import React, { useContext, useState } from "react";
-import DatabaseService, {
-  StateContext
-} from "../database-service/database-service";
+import React, { useContext, useEffect } from "react";
+import { StateContext } from "../database-service/database-service";
+import useNewItemsListReducer, {
+  NewItemsContext
+} from "../hooks/new-items-reducer";
 import { StyleSheet, View, TouchableOpacity, Text, Button } from "react-native";
 import { NewItemField } from "./new-item-field";
 
-const StoreHeader = ({ store }) => {
-  const { state } = useContext(StateContext);
-  const [newItemsList, setList] = useState([]);
-  const [inputFields, setInputFields] = useState([]);
+export const StoreHeader = ({ store }) => {
+  return (
+    <NewItemsContext.Provider value={useNewItemsListReducer()}>
+      <HeaderContent store={store} />
+    </NewItemsContext.Provider>
+  );
+};
+
+const HeaderContent = ({ store }) => {
+  const { updateItems } = useContext(StateContext);
+
+  const { state, clearList, setIsAddingNewItems, setInputFields } = useContext(
+    NewItemsContext
+  );
+
+  const { newItemsList, inputFields, isAddingNewItems } = state;
+
+  const addNewInputField = () => {
+    console.log(state);
+
+    const isListEmpty = !newItemsList.length && inputFields.length < 1;
+    const needMoreInputs = newItemsList.length >= inputFields.length;
+
+    if (isListEmpty || needMoreInputs) {
+      let newInputFields = [...inputFields];
+      newInputFields.push(<NewItemField />);
+      setInputFields(newInputFields);
+      if (!isAddingNewItems) {
+        setIsAddingNewItems(true);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (isAddingNewItems) {
+      addNewInputField();
+    }
+  }, [newItemsList]);
 
   return (
     <>
@@ -18,13 +53,7 @@ const StoreHeader = ({ store }) => {
         </View>
         <TouchableOpacity
           style={styles.toggleInputButton}
-          onPress={() => {
-            let newInputFields = [...inputFields];
-            newInputFields.push(
-              <NewItemField setList={setList} newItemsList={newItemsList} />
-            );
-            setInputFields(newInputFields);
-          }}
+          onPress={addNewInputField}
           accessible={true}
         >
           <View style={styles.buttonTextContainer}>
@@ -37,7 +66,8 @@ const StoreHeader = ({ store }) => {
         <Button
           title={`Add ${newItemsList.join(", ")} to ${store.storeName} list`}
           onPress={() => {
-            console.log(newItemsList);
+            updateItems({ store, items: newItemsList });
+            clearList();
           }}
         />
       )}
@@ -95,5 +125,3 @@ const styles = StyleSheet.create({
     color: "red"
   }
 });
-
-export { StoreHeader };
