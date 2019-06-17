@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -6,13 +6,19 @@ import {
   TouchableOpacity,
   Text
 } from "react-native";
+import { NewItemsContext } from "../hooks/new-items-reducer";
 
-export const NewItemField = ({ newItemsList, setList }) => {
+export const NewItemField = () => {
   const [userInput, setInput] = useState("");
+
+  const { state, setList } = useContext(NewItemsContext);
+  const { newItemsList } = state;
 
   const confirmItem = () => {
     if (userInput) {
-      setList([...newItemsList, userInput]);
+      if (!(newItemsList.indexOf(userInput) > -1)) {
+        setList([...newItemsList, userInput]);
+      }
     }
   };
   return (

@@ -1,25 +1,41 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { StateContext } from "../database-service/database-service";
+import useNewItemsListReducer, {
+  NewItemsContext
+} from "../hooks/new-items-reducer";
 import { StyleSheet, View, TouchableOpacity, Text, Button } from "react-native";
 import { NewItemField } from "./new-item-field";
 
-const StoreHeader = ({ store }) => {
+export const StoreHeader = ({ store }) => {
+  return (
+    <NewItemsContext.Provider value={useNewItemsListReducer()}>
+      <HeaderContent store={store} />
+    </NewItemsContext.Provider>
+  );
+};
+
+const HeaderContent = ({ store }) => {
   const { updateItems } = useContext(StateContext);
-  const [newItemsList, setList] = useState([]);
-  const [inputFields, setInputFields] = useState([]);
-  const [isAddingNewItems, setIsAddingNewItems] = useState(false);
+
+  const { state, clearList, setIsAddingNewItems, setInputFields } = useContext(
+    NewItemsContext
+  );
+
+  const { newItemsList, inputFields, isAddingNewItems } = state;
 
   const addNewInputField = () => {
+    console.log(state);
+
     const isListEmpty = !newItemsList.length && inputFields.length < 1;
     const needMoreInputs = newItemsList.length >= inputFields.length;
 
     if (isListEmpty || needMoreInputs) {
       let newInputFields = [...inputFields];
-      newInputFields.push(
-        <NewItemField newItemsList={newItemsList} setList={setList} />
-      );
+      newInputFields.push(<NewItemField />);
       setInputFields(newInputFields);
-      setIsAddingNewItems(true);
+      if (!isAddingNewItems) {
+        setIsAddingNewItems(true);
+      }
     }
   };
 
@@ -51,9 +67,7 @@ const StoreHeader = ({ store }) => {
           title={`Add ${newItemsList.join(", ")} to ${store.storeName} list`}
           onPress={() => {
             updateItems({ store, items: newItemsList });
-            setList([]);
-            setInputFields([]);
-            setIsAddingNewItems(false);
+            clearList();
           }}
         />
       )}
@@ -111,5 +125,3 @@ const styles = StyleSheet.create({
     color: "red"
   }
 });
-
-export { StoreHeader };
