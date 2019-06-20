@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Text
 } from "react-native";
-import { NewItemsContext } from "../hooks/new-items-reducer";
+import { NewItemsContext } from "GroceryLists/hooks/new-items-reducer";
 
 export const NewItemField = () => {
   const [userInput, setInput] = useState("");

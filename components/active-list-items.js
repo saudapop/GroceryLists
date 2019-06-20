@@ -10,8 +10,8 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import Swipeout from "react-native-swipeout";
-import { StateContext } from "../database-service/database-service";
-import { StoreHeader } from "./store-header";
+import { StateContext } from "GroceryLists/database-service/database-service";
+import { StoreHeader } from "GroceryLists/components/store-header";
 const ActiveListItems = () => {
   const { state, initialFetch, updateItems, refresh } = useContext(
     StateContext

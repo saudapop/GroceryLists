@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from "react";
-import { StateContext } from "../database-service/database-service";
+import { StyleSheet, View, TouchableOpacity, Text, Button } from "react-native";
+import { StateContext } from "GroceryLists/database-service/database-service";
 import useNewItemsListReducer, {
   NewItemsContext
-} from "../hooks/new-items-reducer";
-import { StyleSheet, View, TouchableOpacity, Text, Button } from "react-native";
-import { NewItemField } from "./new-item-field";
+} from "GroceryLists/hooks/new-items-reducer";
+import { NewItemField } from "GroceryLists/components/new-item-field";
 
 export const StoreHeader = ({ store }) => {
   return (

@@ -1,8 +1,8 @@
 import React from "react";
-import { StateContext } from "./database-service/database-service";
-import { useListReducer } from "./hooks/list-reducer";
+import { StateContext } from "GroceryLists/database-service/database-service";
+import { useListReducer } from "GroceryLists/hooks/list-reducer";
 
-import { ActiveListItems } from "./components/active-list-items";
+import { ActiveListItems } from "GroceryLists/components/active-list-items";
 
 const App = () => {
   return (
