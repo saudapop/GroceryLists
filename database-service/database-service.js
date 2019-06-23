@@ -17,7 +17,8 @@ const blankState = {
   db: undefined,
   collection: undefined,
   stores: [],
-  isLoading: true
+  isLoading: true,
+  currentStore: null
 };
 let initialState = blankState;
 const StateContext = React.createContext();

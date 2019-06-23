@@ -1,21 +1,26 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
-  ScrollView,
   RefreshControl,
-  ActivityIndicator
+  ActivityIndicator,
+  FlatList
 } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
-import Swipeout from "react-native-swipeout";
+import { Content, SwipeRow, Button, Icon } from "native-base";
 import { StateContext } from "GroceryLists/database-service/database-service";
 import { StoreHeader } from "GroceryLists/components/store-header";
 const ActiveListItems = () => {
-  const { state, initialFetch, updateItems, refresh } = useContext(
-    StateContext
-  );
+  const {
+    state,
+    initialFetch,
+    updateItems,
+    refresh,
+    setCurrentStore
+  } = useContext(StateContext);
+  const [refs, setRefs] = useState({});
+  const [currentRow, setCurrentRow] = useState(null);
+
   useEffect(() => {
     initialFetch();
 
@@ -31,44 +36,72 @@ const ActiveListItems = () => {
     };
   }, []);
 
+  (function closeSelectedStoreOnItemSwipe() {
+    useEffect(() => {
+      if (currentRow) {
+        currentRow._root.closeRow();
+      }
+    }, [state.currentStore]);
+  })();
+
+  (function closeSelectedItemOnStoreSwipe() {
+    useEffect(() => {
+      if (state.currentStore) {
+        setCurrentStore(null);
+      }
+    }, [currentRow]);
+  })();
+
   const activeListItems = state.stores
     .sort((a, b) => a.storeName > b.storeName)
-    .map(store => {
-      return (
-        <React.Fragment key={store.storeName}>
-          <StoreHeader store={store} />
-          {store.items
-            .filter(item => item.isActive === true)
-            .map((item, i) => (
-              <Swipeout
-                key={item.name}
-                style={{
-                  ...styles.itemContainer,
-                  backgroundColor: i % 2 ? "#edf7ff" : "#c4def2"
-                }}
-                buttonWidth={20}
-                right={[
-                  {
-                    type: "delete",
-                    component: (
-                      <View style={styles.swipeButton}>
-                        <Text style={styles.swipeButtonText}> X </Text>
-                      </View>
-                    ),
-                    onPress: async () =>
-                      updateItems({ store, items: [item.name], state })
-                  }
-                ]}
-              >
-                <Text style={styles.itemName}>{item.name}</Text>
-              </Swipeout>
-            ))}
-        </React.Fragment>
-      );
-    });
+    .map(store => (
+      <React.Fragment key={store.storeName}>
+        <StoreHeader store={store} />
+        <FlatList
+          data={store.items.filter(item => item.isActive === true)}
+          renderItem={({ item, index }) => (
+            <SwipeRow
+              ref={c => {
+                const newRefs = refs;
+                newRefs[item.name] = c;
+                setRefs(newRefs);
+              }}
+              onRowOpen={() => {
+                if (currentRow && currentRow !== refs[item.name]) {
+                  currentRow._root.closeRow();
+                }
+                setCurrentRow(refs[item.name]);
+              }}
+              key={item.name}
+              style={{
+                ...styles.itemContainer,
+                backgroundColor: index % 2 ? "#edf7ff" : "#c4def2"
+              }}
+              rightOpenValue={-50}
+              right={
+                <Button
+                  danger
+                  onPress={async () => {
+                    updateItems({ store, items: [item.name], state });
+                    setCurrentRow(null);
+                  }}
+                >
+                  <Icon active name="trash" />
+                </Button>
+              }
+              body={
+                <View>
+                  <Text style={styles.itemName}>{item.name}</Text>
+                </View>
+              }
+            />
+          )}
+        />
+      </React.Fragment>
+    ));
 
   return !state.isLoading ? (
-    <ScrollView
+    <Content
       keyboardShouldPersistTaps="never"
       refreshControl={
         <RefreshControl
@@ -77,10 +110,10 @@ const ActiveListItems = () => {
         />
       }
     >
-      <KeyboardAwareScrollView style={styles.scrollContainer}>
+      <View style={styles.storesList}>
         {state.stores.length && activeListItems}
-      </KeyboardAwareScrollView>
-    </ScrollView>
+      </View>
+    </Content>
   ) : (
     <View style={styles.loading}>
       <ActivityIndicator size="large" color="green" />
@@ -97,23 +130,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
-  scrollContainer: {
+  storesList: {
     flex: 1,
-    marginTop: 75,
     backgroundColor: "#fff"
   },
   itemContainer: {
-    justifyContent: "center",
-    marginTop: 3,
-    paddingLeft: 30,
-    height: 35,
+    display: "flex",
+    paddingLeft: 25,
     borderTopWidth: 0.15,
     borderBottomWidth: 0.15
-  },
-  swipeButton: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
   },
   swipeButtonText: {
     color: "white",

@@ -1,5 +1,6 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, View, TouchableOpacity, Text, Button } from "react-native";
+import { Icon, Button as NbButton, SwipeRow } from "native-base";
 import { StateContext } from "GroceryLists/database-service/database-service";
 import useNewItemsListReducer, {
   NewItemsContext
@@ -15,54 +16,95 @@ export const StoreHeader = ({ store }) => {
 };
 
 const HeaderContent = ({ store }) => {
-  const { updateItems } = useContext(StateContext);
-
-  const { state, clearList, setIsAddingNewItems, setInputFields } = useContext(
-    NewItemsContext
+  const { updateItems, state: stateContext, setCurrentStore } = useContext(
+    StateContext
   );
+  const [component, setComponent] = useState(null);
 
-  const { newItemsList, inputFields, isAddingNewItems } = state;
+  const {
+    state,
+    clearList,
+    setIsAddingNewItems,
+    setNumberOfInputs
+  } = useContext(NewItemsContext);
+
+  const { newItemsList, numberOfInputs, isAddingNewItems } = state;
 
   const addNewInputField = () => {
-    console.log(state);
-
-    const isListEmpty = !newItemsList.length && inputFields.length < 1;
-    const needMoreInputs = newItemsList.length >= inputFields.length;
+    const isListEmpty = !newItemsList.length && numberOfInputs < 1;
+    const needMoreInputs = newItemsList.length >= numberOfInputs;
 
     if (isListEmpty || needMoreInputs) {
-      let newInputFields = [...inputFields];
-      newInputFields.push(<NewItemField />);
-      setInputFields(newInputFields);
+      setNumberOfInputs(numberOfInputs + 1);
       if (!isAddingNewItems) {
         setIsAddingNewItems(true);
       }
     }
   };
 
-  useEffect(() => {
-    if (isAddingNewItems) {
-      addNewInputField();
-    }
-  }, [newItemsList]);
+  (function autoAddInputFields() {
+    useEffect(() => {
+      if (isAddingNewItems) {
+        addNewInputField();
+      }
+    }, [newItemsList]);
+  })();
+
+  (function autoCloseStoreOnStoreChange() {
+    useEffect(() => {
+      if (stateContext.currentStore !== store.storeName) {
+        setNumberOfInputs(0);
+        if (component) {
+          component._root.closeRow();
+        }
+      }
+    }, [stateContext.currentStore]);
+  })();
 
   return (
     <>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.storeName}>{store.storeName}</Text>
-        </View>
-        <TouchableOpacity
-          style={styles.toggleInputButton}
-          onPress={addNewInputField}
-          accessible={true}
-        >
-          <View style={styles.buttonTextContainer}>
-            <Text style={styles.buttonOpen}>{"+"}</Text>
+      <SwipeRow
+        ref={c => setComponent(c)}
+        style={styles.header}
+        body={
+          <View>
+            <Text style={styles.storeName}>{store.storeName}</Text>
           </View>
-        </TouchableOpacity>
-      </View>
-      {inputFields && inputFields.map(input => input)}
-      {newItemsList[0] && (
+        }
+        leftOpenValue={75}
+        rightOpenValue={-75}
+        onRowOpen={() => setCurrentStore(store.storeName)}
+        disableLeftSwipe={numberOfInputs === 0}
+        right={
+          <NbButton
+            danger
+            style={{ marginTop: 1, marginBottom: 1, marginRight: 5 }}
+            onPress={() => {
+              setNumberOfInputs(0);
+              component._root.closeRow();
+            }}
+          >
+            <Icon name="ios-remove-circle-outline" />
+          </NbButton>
+        }
+        left={
+          <NbButton
+            style={{ marginTop: 1, marginBottom: 1, marginLeft: 5 }}
+            onPress={() => {
+              addNewInputField();
+              component._root.closeRow();
+            }}
+          >
+            <Icon name="ios-add-circle" />
+          </NbButton>
+        }
+      />
+      {Array(numberOfInputs)
+        .fill()
+        .map((_, i) => (
+          <NewItemField key={i} />
+        ))}
+      {!!newItemsList.length && (
         <Button
           title={`Add ${newItemsList.join(", ")} to ${store.storeName} list`}
           onPress={() => {
@@ -77,12 +119,10 @@ const HeaderContent = ({ store }) => {
 
 const styles = StyleSheet.create({
   header: {
-    flex: 1,
+    display: "flex",
     justifyContent: "space-between",
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 1,
+    marginBottom: 1,
     paddingLeft: 5,
     paddingRight: 5,
     backgroundColor: "#DEDEDE",
