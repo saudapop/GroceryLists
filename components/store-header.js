@@ -17,22 +17,23 @@ export const StoreHeader = ({ store }) => {
 const HeaderContent = ({ store }) => {
   const { updateItems } = useContext(StateContext);
 
-  const { state, clearList, setIsAddingNewItems, setInputFields } = useContext(
-    NewItemsContext
-  );
+  const {
+    state,
+    clearList,
+    setIsAddingNewItems,
+    setNumberOfInputs
+  } = useContext(NewItemsContext);
 
-  const { newItemsList, inputFields, isAddingNewItems } = state;
+  const { newItemsList, numberOfInputs, isAddingNewItems } = state;
 
   const addNewInputField = () => {
     console.log(state);
 
-    const isListEmpty = !newItemsList.length && inputFields.length < 1;
-    const needMoreInputs = newItemsList.length >= inputFields.length;
+    const isListEmpty = !newItemsList.length && numberOfInputs < 1;
+    const needMoreInputs = newItemsList.length >= numberOfInputs;
 
     if (isListEmpty || needMoreInputs) {
-      let newInputFields = [...inputFields];
-      newInputFields.push(<NewItemField />);
-      setInputFields(newInputFields);
+      setNumberOfInputs(numberOfInputs + 1);
       if (!isAddingNewItems) {
         setIsAddingNewItems(true);
       }
@@ -61,8 +62,12 @@ const HeaderContent = ({ store }) => {
           </View>
         </TouchableOpacity>
       </View>
-      {inputFields && inputFields.map(input => input)}
-      {newItemsList[0] && (
+      {Array(numberOfInputs)
+        .fill()
+        .map((_, i) => (
+          <NewItemField key={i} />
+        ))}
+      {!!newItemsList.length && (
         <Button
           title={`Add ${newItemsList.join(", ")} to ${store.storeName} list`}
           onPress={() => {

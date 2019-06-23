@@ -9,7 +9,7 @@ const ACTIONS = {
 
 const initialNewItemsListState = {
   newItemsList: [],
-  inputFields: [],
+  numberOfInputs: 0,
   isAddingNewItems: false
 };
 
@@ -22,7 +22,7 @@ const newItemsReducer = (state, action) => {
     case ACTIONS.SET_NEW_ITEMS_LIST:
       return { ...state, newItemsList: action.newItemsList };
     case ACTIONS.SET_INPUT_FIELDS:
-      return { ...state, inputFields: action.inputFields };
+      return { ...state, numberOfInputs: action.numberOfInputs };
     default:
       return { ...state };
   }
@@ -42,10 +42,10 @@ const useNewItemsListReducer = () => {
   const setIsAddingNewItems = isAddingNewItems =>
     dispatch({ type: ACTIONS.SET_IS_ADDING_NEW_ITEMS, isAddingNewItems });
 
-  const setInputFields = inputFields =>
-    dispatch({ type: ACTIONS.SET_INPUT_FIELDS, inputFields });
+  const setNumberOfInputs = numberOfInputs =>
+    dispatch({ type: ACTIONS.SET_INPUT_FIELDS, numberOfInputs });
 
-  return { state, clearList, setList, setIsAddingNewItems, setInputFields };
+  return { state, clearList, setList, setIsAddingNewItems, setNumberOfInputs };
 };
 
 export default useNewItemsListReducer;

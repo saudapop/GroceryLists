@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text
 } from "react-native";
+import { Icon, Button } from "native-base";
 import { NewItemsContext } from "GroceryLists/hooks/new-items-reducer";
 
 export const NewItemField = () => {
@@ -15,8 +16,9 @@ export const NewItemField = () => {
   const { newItemsList } = state;
 
   const confirmItem = () => {
+    const isDuplicate = newItemsList.indexOf(userInput) > -1;
     if (userInput) {
-      if (!(newItemsList.indexOf(userInput) > -1)) {
+      if (!isDuplicate) {
         setList([...newItemsList, userInput]);
       }
     }
@@ -35,7 +37,8 @@ export const NewItemField = () => {
         placeholderTextColor={"gray"}
       />
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
+        <Button
+          danger
           onPress={() => {
             if (userInput) {
               const listWithRemovedItem = newItemsList.filter(
@@ -45,12 +48,13 @@ export const NewItemField = () => {
               setList(listWithRemovedItem);
             }
           }}
+          style={styles.actionButton}
         >
-          <Text>❌</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={confirmItem}>
-          <Text>✅</Text>
-        </TouchableOpacity>
+          <Icon name="md-close" style={styles.icon} />
+        </Button>
+        <Button success onPress={confirmItem} style={styles.actionButton}>
+          <Icon name="md-checkmark" style={styles.icon} />
+        </Button>
       </View>
     </View>
   );
@@ -68,5 +72,23 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row"
+  },
+  actionButton: {
+    alignSelf: "flex-end",
+    justifyContent: "center",
+    marginRight: 10,
+    marginLeft: 10,
+    marginBottom: 5,
+    paddingTop: 0,
+    paddingBottom: 0,
+    height: 30,
+    width: 50
+  },
+  icon: {
+    color: "white",
+    fontWeight: "bold",
+    marginLeft: 0,
+    marginRight: 0,
+    fontSize: 25
   }
 });
