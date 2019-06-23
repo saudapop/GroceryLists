@@ -11,11 +11,16 @@ import { Content, SwipeRow, Button, Icon } from "native-base";
 import { StateContext } from "GroceryLists/database-service/database-service";
 import { StoreHeader } from "GroceryLists/components/store-header";
 const ActiveListItems = () => {
-  const { state, initialFetch, updateItems, refresh } = useContext(
-    StateContext
-  );
+  const {
+    state,
+    initialFetch,
+    updateItems,
+    refresh,
+    setCurrentStore
+  } = useContext(StateContext);
   const [refs, setRefs] = useState({});
   const [currentRow, setCurrentRow] = useState(null);
+
   useEffect(() => {
     initialFetch();
 
@@ -30,6 +35,22 @@ const ActiveListItems = () => {
         });
     };
   }, []);
+
+  (function closeSelectedStoreOnItemSwipe() {
+    useEffect(() => {
+      if (currentRow) {
+        currentRow._root.closeRow();
+      }
+    }, [state.currentStore]);
+  })();
+
+  (function closeSelectedItemOnStoreSwipe() {
+    useEffect(() => {
+      if (state.currentStore) {
+        setCurrentStore(null);
+      }
+    }, [currentRow]);
+  })();
 
   const activeListItems = state.stores
     .sort((a, b) => a.storeName > b.storeName)

@@ -11,6 +11,8 @@ const listReducer = (state, action) => {
       return { ...state, isLoading: !state.isLoading };
     case ACTIONS.FETCH_ITEMS:
       return { ...state, stores: action.stores, isLoading: false };
+    case ACTIONS.SET_CURRENT_STORE:
+      return { ...state, currentStore: action.currentStore };
     default:
       return state;
   }
@@ -46,14 +48,24 @@ const useListReducer = () => {
     });
     fetchItems(await DatabaseService.fetchStores(state));
   };
+  const setCurrentStore = currentStore =>
+    dispatch({ type: ACTIONS.SET_CURRENT_STORE, currentStore });
 
-  return { state, initialFetch, setLoading, refresh, updateItems };
+  return {
+    state,
+    initialFetch,
+    setLoading,
+    refresh,
+    updateItems,
+    setCurrentStore
+  };
 };
 
 const ACTIONS = {
   INITIAL_FETCH: "INITIAL_FETCH",
   FETCH_ITEMS: "FETCH_ITEMS",
-  SET_LOADING: "SET_LOADING"
+  SET_LOADING: "SET_LOADING",
+  SET_CURRENT_STORE: "SET_CURRENT_STORE"
 };
 
 export { useListReducer, ACTIONS };
