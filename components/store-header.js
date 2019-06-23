@@ -125,8 +125,8 @@ const styles = StyleSheet.create({
     marginBottom: 1,
     paddingLeft: 5,
     paddingRight: 5,
-    backgroundColor: "#DEDEDE",
-    borderColor: "#DDDDDD",
+    backgroundColor: "#DDDDDD",
+    borderColor: "#985B45",
     borderTopWidth: 0.5,
     borderBottomWidth: 0.5
   },
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
   },
   storeName: {
     fontWeight: "bold",
+    color: "#303032",
     fontSize: 25
   },
   toggleInputButton: {

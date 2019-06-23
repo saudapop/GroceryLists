@@ -13,6 +13,8 @@ const listReducer = (state, action) => {
       return { ...state, stores: action.stores, isLoading: false };
     case ACTIONS.SET_CURRENT_STORE:
       return { ...state, currentStore: action.currentStore };
+    case ACTIONS.SELECT_TAB:
+      return { ...state, currentTab: action.tab };
     default:
       return state;
   }
@@ -51,13 +53,16 @@ const useListReducer = () => {
   const setCurrentStore = currentStore =>
     dispatch({ type: ACTIONS.SET_CURRENT_STORE, currentStore });
 
+  const selectTab = tab => dispatch({ type: ACTIONS.SELECT_TAB, tab });
+
   return {
     state,
     initialFetch,
     setLoading,
     refresh,
     updateItems,
-    setCurrentStore
+    setCurrentStore,
+    selectTab
   };
 };
 
@@ -65,7 +70,8 @@ const ACTIONS = {
   INITIAL_FETCH: "INITIAL_FETCH",
   FETCH_ITEMS: "FETCH_ITEMS",
   SET_LOADING: "SET_LOADING",
-  SET_CURRENT_STORE: "SET_CURRENT_STORE"
+  SET_CURRENT_STORE: "SET_CURRENT_STORE",
+  SELECT_TAB: "SELECT_TAB"
 };
 
 export { useListReducer, ACTIONS };

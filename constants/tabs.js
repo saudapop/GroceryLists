@@ -1,0 +1,6 @@
+const TABS = {
+  CURRENT_LIST: "CURRENT_LIST",
+  ADD_NEW_STORE: "ADD_NEW_STORE"
+};
+
+export { TABS };

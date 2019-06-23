@@ -4,6 +4,7 @@ import {
   AnonymousCredential,
   RemoteMongoClient
 } from "mongodb-stitch-react-native-sdk";
+import { TABS } from "GroceryLists/constants/tabs";
 
 import {
   STITCH_APP_NAME,
@@ -18,7 +19,8 @@ const blankState = {
   collection: undefined,
   stores: [],
   isLoading: true,
-  currentStore: null
+  currentStore: null,
+  currentTab: TABS.CURRENT_LIST
 };
 let initialState = blankState;
 const StateContext = React.createContext();

@@ -22,7 +22,7 @@ const ActiveListItems = () => {
   const [currentRow, setCurrentRow] = useState(null);
 
   useEffect(() => {
-    initialFetch();
+    if (!state.stores.length) initialFetch();
 
     return () => {
       state.client.auth
@@ -90,7 +90,21 @@ const ActiveListItems = () => {
                 </Button>
               }
               body={
-                <View>
+                <View style={styles.itemNameContainer}>
+                  <Icon
+                    small
+                    name="ios-arrow-forward"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      paddingTop: 3,
+                      paddingRight: 10,
+                      paddingLeft: 35,
+                      fontSize: 15,
+                      color: "gray"
+                    }}
+                  />
                   <Text style={styles.itemName}>{item.name}</Text>
                 </View>
               }
@@ -136,9 +150,14 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     display: "flex",
-    paddingLeft: 25,
     borderTopWidth: 0.15,
     borderBottomWidth: 0.15
+  },
+  itemNameContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center"
   },
   swipeButtonText: {
     color: "white",
