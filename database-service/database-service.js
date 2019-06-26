@@ -21,8 +21,6 @@ const blankState = {
   isLoading: true,
   currentStore: null,
   currentTab: TABS.CURRENT_LISTS,
-  refs: {},
-  currentRow: null
 };
 let initialState = blankState;
 const StateContext = React.createContext();
