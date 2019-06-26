@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, View, TouchableOpacity, Text, Button } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { Icon, Button as NbButton, SwipeRow } from "native-base";
 import { StateContext } from "GroceryLists/database-service/database-service";
 import useNewItemsListReducer, {
   NewItemsContext
 } from "GroceryLists/hooks/new-items-reducer";
 import { NewItemField } from "GroceryLists/components/new-item-field";
+import { COLORS } from "../constants/colors";
 
 export const StoreHeader = ({ store }) => {
   return (
@@ -52,14 +53,31 @@ const HeaderContent = ({ store }) => {
 
   (function autoCloseStoreOnStoreChange() {
     useEffect(() => {
-      if (stateContext.currentStore !== store.storeName) {
-        setNumberOfInputs(0);
-        if (component) {
-          component._root.closeRow();
-        }
+      if (stateContext.currentStore !== store.storeName && component) {
+        clearStore();
       }
     }, [stateContext.currentStore]);
   })();
+
+  const clearStore = () => {
+    setNumberOfInputs(0);
+    component._root.closeRow();
+    clearList();
+  };
+
+  const getAddItemsText = () => {
+    let res;
+    let end = newItemsList.length - 1;
+
+    if (newItemsList.length > 2) {
+      res = `${newItemsList.slice(0, end).join(", ")}, & ${newItemsList[end]}`;
+    } else if (newItemsList.length === 2) {
+      res = `${newItemsList[0]} & ${newItemsList[1]}`;
+    } else {
+      res = newItemsList[0];
+    }
+    return `Add ${res} to ${store.storeName} list`;
+  };
 
   return (
     <>
@@ -79,17 +97,18 @@ const HeaderContent = ({ store }) => {
           <NbButton
             danger
             style={{ marginTop: 1, marginBottom: 1, marginRight: 5 }}
-            onPress={() => {
-              setNumberOfInputs(0);
-              component._root.closeRow();
-            }}
+            onPress={clearStore}
           >
             <Icon name="ios-remove-circle-outline" />
           </NbButton>
         }
         left={
           <NbButton
-            style={{ marginTop: 1, marginBottom: 1, marginLeft: 5 }}
+            style={{
+              marginTop: 1,
+              marginBottom: 1,
+              marginLeft: 5
+            }}
             onPress={() => {
               addNewInputField();
               component._root.closeRow();
@@ -99,25 +118,36 @@ const HeaderContent = ({ store }) => {
           </NbButton>
         }
       />
-      {Array(numberOfInputs)
-        .fill()
-        .map((_, i) => (
-          <NewItemField key={i} />
-        ))}
-      {!!newItemsList.length && (
-        <Button
-          title={`Add ${newItemsList.join(", ")} to ${store.storeName} list`}
-          onPress={() => {
-            updateItems({ store, items: newItemsList });
-            clearList();
-          }}
-        />
-      )}
+      <View style={styles.addItemsContainer}>
+        {Array(numberOfInputs)
+          .fill()
+          .map((_, i) => (
+            <NewItemField key={i} />
+          ))}
+        {!!newItemsList.length && (
+          <NbButton
+            rounded
+            vertical
+            style={styles.addItemsButtonContainer}
+            onPress={() => {
+              updateItems({ store, items: newItemsList });
+              clearList();
+            }}
+          >
+            <Text style={styles.addItemsButtonText}>{getAddItemsText()}</Text>
+          </NbButton>
+        )}
+      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  addItemsContainer: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
   header: {
     display: "flex",
     justifyContent: "space-between",
@@ -125,10 +155,7 @@ const styles = StyleSheet.create({
     marginBottom: 1,
     paddingLeft: 5,
     paddingRight: 5,
-    backgroundColor: "#DDDDDD",
-    borderColor: "#985B45",
-    borderTopWidth: 0.5,
-    borderBottomWidth: 0.5
+    backgroundColor: COLORS.GRAY
   },
   input: {
     maxWidth: 100,
@@ -137,32 +164,21 @@ const styles = StyleSheet.create({
   },
   storeName: {
     fontWeight: "bold",
-    color: "#303032",
+    color: COLORS.DARK_GRAY,
     fontSize: 25
   },
-  toggleInputButton: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: 5,
-    padding: 0.5,
-    backgroundColor: "#DDDDDD",
-    borderRadius: 50,
-    borderWidth: 0.25,
-    width: 20,
-    height: 20
+  addItemsButtonContainer: {
+    alignSelf: "center",
+    backgroundColor: COLORS.SHARP_BLUE,
+    padding: 15,
+    margin: 10,
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    shadowOffset: { width: 5, height: 5 },
+    shadowColor: COLORS.GRAY
   },
-  buttonTextContainer: {
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  buttonText: {
+  addItemsButtonText: {
+    color: COLORS.WHITE,
     fontSize: 20
-  },
-  buttonOpen: {
-    color: "green"
-  },
-  buttonClose: {
-    color: "red"
   }
 });

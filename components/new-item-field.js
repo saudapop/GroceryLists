@@ -1,54 +1,63 @@
 import React, { useState, useContext } from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View, Dimensions } from "react-native";
 import { Icon, Button } from "native-base";
 import { NewItemsContext } from "GroceryLists/hooks/new-items-reducer";
+import { COLORS } from "GroceryLists/constants/colors";
 
 export const NewItemField = () => {
   const [userInput, setInput] = useState("");
-
+  const [component, setComponent] = useState(null);
   const { state, setList } = useContext(NewItemsContext);
   const { newItemsList } = state;
 
+  const listContainsItem = newItemsList.indexOf(userInput) > -1;
+
   const confirmItem = () => {
-    const isDuplicate = newItemsList.indexOf(userInput) > -1;
-    if (userInput) {
-      if (!isDuplicate) {
-        setList([...newItemsList, userInput]);
-      }
+    if (userInput && !listContainsItem) {
+      setList([...newItemsList, userInput]);
     }
+    console.log(component);
   };
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.input}
+        ref={c => setComponent(c)}
         value={userInput}
         onChangeText={text => setInput(text)}
         returnKeyType="done"
         enablesReturnKeyAutomatically
-        onEndEditing={confirmItem}
+        keyboardAppearance="dark"
+        onSubmitEditing={confirmItem}
         autoFocus={true}
+        editable={(component && component.isFocused()) || !listContainsItem}
         placeholder={"ex: Bananas..."}
         placeholderTextColor={"gray"}
       />
+      {listContainsItem && (
+        <Icon
+          style={{ ...styles.icon, color: COLORS.SUCCESS }}
+          name="md-checkmark"
+        />
+      )}
       <View style={styles.buttonContainer}>
-        <Button
-          danger
-          onPress={() => {
-            if (userInput) {
-              const listWithRemovedItem = newItemsList.filter(
-                item => item !== userInput
-              );
-              setInput("");
-              setList(listWithRemovedItem);
-            }
-          }}
-          style={styles.actionButton}
-        >
-          <Icon name="md-close" style={styles.icon} />
-        </Button>
-        <Button success onPress={confirmItem} style={styles.actionButton}>
-          <Icon name="md-checkmark" style={styles.icon} />
-        </Button>
+        {!!userInput && (
+          <Button
+            danger
+            onPress={() => {
+              if (userInput) {
+                const listWithRemovedItem = newItemsList.filter(
+                  item => item !== userInput
+                );
+                setInput("");
+                setList(listWithRemovedItem);
+              }
+            }}
+            style={styles.actionButton}
+          >
+            <Icon name="md-close" style={styles.icon} />
+          </Button>
+        )}
       </View>
     </View>
   );
@@ -56,13 +65,21 @@ export const NewItemField = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row"
+    display: "flex",
+    flexDirection: "row",
+    backgroundColor: COLORS.WHITE,
+    width: Dimensions.get("window").width,
+    paddingTop: 5,
+    paddingLeft: 5,
+    height: 40
   },
   input: {
-    minWidth: 100,
+    display: "flex",
+    flex: 1,
     padding: 1,
+    fontSize: 20,
     position: "relative",
-    color: "green"
+    color: COLORS.SHARP_BLUE
   },
   buttonContainer: {
     flexDirection: "row"
@@ -79,7 +96,7 @@ const styles = StyleSheet.create({
     width: 50
   },
   icon: {
-    color: "white",
+    color: COLORS.WHITE,
     fontWeight: "bold",
     marginLeft: 0,
     marginRight: 0,

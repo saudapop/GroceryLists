@@ -1,0 +1,11 @@
+const COLORS = {
+  WHITE: "#FCFFFD",
+  GRAY: "#D7DAE5",
+  DARK_GRAY: "#303032",
+  LIGHT_BLUE: "#EDF7FF",
+  ACCENT_BLUE: "#C4DEF2",
+  SHARP_BLUE: "#2F7CF6",
+  SUCCESS: "#74B566"
+};
+
+export { COLORS };
