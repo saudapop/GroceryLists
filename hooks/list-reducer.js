@@ -51,7 +51,8 @@ const useListReducer = () => {
     fetchItems(await DatabaseService.fetchStores(state));
   };
 
-  const setRefs = refs => dispatch({ type: ACTIONS.SET_REFS, refs });
+  const setCurrentStore = currentStore =>
+    dispatch({ type: ACTIONS.SET_CURRENT_STORE, currentStore });
 
   const selectTab = tab => dispatch({ type: ACTIONS.SELECT_TAB, tab });
 
@@ -62,8 +63,6 @@ const useListReducer = () => {
     refresh,
     updateItems,
     setCurrentStore,
-    setCurrentRow,
-    setRefs,
     selectTab
   };
 };
@@ -73,7 +72,7 @@ const ACTIONS = {
   FETCH_ITEMS: "FETCH_ITEMS",
   SET_LOADING: "SET_LOADING",
   SET_CURRENT_STORE: "SET_CURRENT_STORE",
-  SELECT_TAB: "SELECT_TAB",
- };
+  SELECT_TAB: "SELECT_TAB"
+};
 
 export { useListReducer, ACTIONS };

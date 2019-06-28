@@ -16,7 +16,6 @@ export const NewItemField = () => {
     if (userInput && !listContainsItem) {
       setList([...newItemsList, userInput]);
     }
-    console.log(component);
   };
   return (
     <View style={styles.container}>

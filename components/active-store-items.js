@@ -45,7 +45,10 @@ const ActiveStoreItems = ({ store, items, currentRowState }) => {
               </Button>
             }
             body={
-              <TouchableOpacity style={styles.itemNameContainer}>
+              <TouchableOpacity
+                onPress={() => console.log(item.name)}
+                style={styles.itemNameContainer}
+              >
                 <Icon small name="ios-arrow-forward" style={styles.listIcon} />
                 <Text style={styles.itemName}>{item.name}</Text>
               </TouchableOpacity>
