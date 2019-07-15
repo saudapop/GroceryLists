@@ -20,7 +20,7 @@ const blankState = {
   stores: [],
   isLoading: true,
   currentStore: null,
-  currentTab: TABS.CURRENT_LISTS,
+  currentTab: TABS.CURRENT_LISTS
 };
 let initialState = blankState;
 const StateContext = React.createContext();
@@ -49,6 +49,13 @@ export default (DatabaseService = {
       initialState.db = mongoClient.db(DB_NAME);
       initialState.collection = initialState.db.collection(COLLECTION_NAME);
       initialState.stores = await initialState.collection.find({}).asArray();
+      initialState.stores = initialState.stores.map(store => {
+        return {
+          ...store,
+          isActiveListExpanded: true,
+          isPreviousListExpanded: true
+        };
+      });
       initialState.isLoading = false;
       return initialState;
     } catch (err) {

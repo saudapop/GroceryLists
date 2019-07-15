@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const useCurrentRowState = () => {
-  const [refs, setRefs] = useState({});
+  const refs = useRef({});
   const [currentRow, setCurrentRow] = useState(null);
 
-  return { refs, setRefs, currentRow, setCurrentRow };
+  return { refs, currentRow, setCurrentRow };
 };
 
 export { useCurrentRowState };

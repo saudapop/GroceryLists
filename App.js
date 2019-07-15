@@ -9,15 +9,16 @@ import {
   FooterTab,
   Text,
   Icon,
-  Button,
-  Content
+  Button
 } from "native-base";
-import { StyleSheet, Modal, View, TextInput } from "react-native";
+import { StyleSheet } from "react-native";
 import { StateContext } from "GroceryLists/database-service/database-service";
 import { useListReducer } from "GroceryLists/hooks/list-reducer";
 import { TABS } from "GroceryLists/constants/tabs";
 import { COLORS } from "GroceryLists/constants/colors";
+import { Fade } from "GroceryLists/animations/fade";
 import { CurrentLists } from "GroceryLists/components/current-lists";
+import { NewStoreModal } from "GroceryLists/components/new-store-modal";
 
 const App = () => {
   return (
@@ -30,7 +31,9 @@ const App = () => {
 };
 
 const AppContent = () => {
-  const { state, selectTab, initialFetch } = useContext(StateContext);
+  const { state, selectTab, initialFetch, toggleAllListsExpanded } = useContext(
+    StateContext
+  );
 
   useEffect(() => {
     if (!state.stores.length) initialFetch();
@@ -58,92 +61,21 @@ const AppContent = () => {
         <Body>
           <Title style={styles.headerText}>Ahmed Family Grocery Lists</Title>
         </Body>
+        <Icon
+          style={styles.toggleListIcon}
+          type="MaterialCommunityIcons"
+          name="arrow-collapse"
+          onPress={() => toggleAllListsExpanded("isActiveListExpanded")}
+        />
       </Header>
       {(state.currentTab === TABS.CURRENT_LISTS || TABS.ADD_NEW_STORE) && (
         <CurrentLists />
       )}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={state.currentTab === TABS.ADD_NEW_STORE}
-      >
-        <View
-          style={{
-            height: "100%",
-            width: "100%",
-            position: "absolute",
-            backgroundColor: COLORS.DARK_GRAY,
-            opacity: 0.9
-          }}
-        />
-        <Content
-          contentContainerStyle={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: 10,
-            borderWidth: 10
-          }}
-        >
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              position: "absolute",
-              justifyContent: "space-between",
-              backgroundColor: COLORS.DARK_GRAY,
-              borderColor: COLORS.GRAY,
-              zIndex: 10,
-              height: "70%",
-              width: "90%",
-              borderRadius: 10,
-              borderWidth: 0.5
-            }}
-          >
-            <View
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 10,
-                borderWidth: 3
-              }}
-            >
-              <TextInput
-                returnKeyType="done"
-                enablesReturnKeyAutomatically
-                keyboardAppearance="dark"
-                autoFocus={true}
-                editable={true}
-                placeholder={"ex: Bananas..."}
-                placeholderTextColor={"gray"}
-              />
-            </View>
-            <View
-              style={{
-                width: "90%",
-                padding: 10,
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-evenly",
-                alignSelf: "center",
-                alignItems: "center",
-                padding: 10,
-                borderWidth: 3
-              }}
-            >
-              <Button onPress={() => console.log("buttonPressed")}>
-                <Text style={{ color: COLORS.WHITE }}>Add New Store</Text>
-              </Button>
-              <Button danger onPress={() => selectTab(TABS.CURRENT_LISTS)}>
-                <Text>Cancel</Text>
-              </Button>
-            </View>
-          </View>
-        </Content>
-      </Modal>
+      <NewStoreModal
+        show={state.currentTab === TABS.ADD_NEW_STORE}
+        onCancel={() => selectTab(TABS.CURRENT_LISTS)}
+        onStoreCreate={() => alert("it worked")}
+      />
       <Footer style={styles.footer}>
         <FooterTab vertical>
           <Button
@@ -184,6 +116,9 @@ const styles = StyleSheet.create({
     color: COLORS.GRAY,
     marginRight: -20,
     marginLeft: 5
+  },
+  toggleListIcon: {
+    color: COLORS.GRAY
   },
   headerText: {
     color: COLORS.GRAY,

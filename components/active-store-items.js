@@ -1,59 +1,102 @@
-import React, { useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { isEqual } from "lodash";
 import { StyleSheet, Text, FlatList, TouchableOpacity } from "react-native";
 import { SwipeRow, Button, Icon } from "native-base";
 import { StateContext } from "GroceryLists/database-service/database-service";
 import { COLORS } from "GroceryLists/constants/colors";
-
+import { Fade } from "GroceryLists/animations/fade";
 const ActiveStoreItems = ({ store, items, currentRowState }) => {
   const { state, updateItems } = useContext(StateContext);
-  const { refs, setRefs, currentRow, setCurrentRow } = currentRowState;
+  const { refs, currentRow, setCurrentRow } = currentRowState;
+  const [itemsVisibility, setItemsVisibility] = useState({});
+
+  const getItemsVisibility = id => {
+    const isItemListed = Object.keys(itemsVisibility).some(
+      visibleItem => visibleItem === id
+    );
+    if (!isItemListed) {
+      const newItemsVisibility = itemsVisibility;
+      newItemsVisibility[id] = true;
+      setItemsVisibility(newItemsVisibility);
+    }
+  };
+
+  useEffect(() => {
+    items.forEach(item => {
+      const id = `${store.storeName}-${item.name}`;
+      if (itemsVisibility[id] === false && item.isActive) {
+        const newItemsVisibility = itemsVisibility;
+        newItemsVisibility[id] = true;
+        setItemsVisibility(newItemsVisibility);
+      }
+    });
+  }, [items]);
+
   return (
     <FlatList
       data={items}
       renderItem={({ item, index }) => {
         const id = `${store.storeName}-${item.name}`;
+        getItemsVisibility(id);
         return (
-          <SwipeRow
-            ref={c => {
-              const newRefs = refs;
-              newRefs[id] = c;
-              setRefs(newRefs);
-            }}
-            onRowOpen={() => {
-              const openingNewRow = currentRow && currentRow !== refs[id];
-              if (openingNewRow) {
-                currentRow._root.closeRow();
+          <Fade visible={itemsVisibility[id]}>
+            <SwipeRow
+              ref={c => {
+                const newRefs = refs.current;
+                newRefs[id] = { ...c, id };
+                refs.current = newRefs;
+              }}
+              onRowOpen={() => {
+                const thisRow = refs.current[id];
+                const openingNewRow =
+                  currentRow &&
+                  currentRow._root &&
+                  !isEqual(currentRow.id, thisRow.id);
+                if (openingNewRow) {
+                  currentRow._root.closeRow();
+                }
+                setCurrentRow(refs.current[id]);
+              }}
+              key={item.name}
+              style={{
+                ...styles.itemContainer,
+                backgroundColor:
+                  index % 2 ? COLORS.LIGHT_BLUE : COLORS.ACCENT_BLUE
+              }}
+              rightOpenValue={-50}
+              right={
+                <Button
+                  danger
+                  onPress={async () => {
+                    const newItemsVisibility = itemsVisibility;
+                    newItemsVisibility[id] = false;
+                    setItemsVisibility(newItemsVisibility);
+                    setTimeout(
+                      () => updateItems({ store, items: [item.name], state }),
+                      0
+                    );
+
+                    setCurrentRow(null);
+                  }}
+                >
+                  <Icon active name="ios-remove-circle-outline" />
+                </Button>
               }
-              setCurrentRow(refs[id]);
-            }}
-            key={item.name}
-            style={{
-              ...styles.itemContainer,
-              backgroundColor:
-                index % 2 ? COLORS.LIGHT_BLUE : COLORS.ACCENT_BLUE
-            }}
-            rightOpenValue={-50}
-            right={
-              <Button
-                danger
-                onPress={async () => {
-                  updateItems({ store, items: [item.name], state });
-                  setCurrentRow(null);
-                }}
-              >
-                <Icon active name="ios-remove-circle-outline" />
-              </Button>
-            }
-            body={
-              <TouchableOpacity
-                onPress={() => console.log(item.name)}
-                style={styles.itemNameContainer}
-              >
-                <Icon small name="ios-arrow-forward" style={styles.listIcon} />
-                <Text style={styles.itemName}>{item.name}</Text>
-              </TouchableOpacity>
-            }
-          />
+              body={
+                <TouchableOpacity
+                  onPress={() => console.log(item.name)}
+                  style={styles.itemNameContainer}
+                >
+                  <Icon
+                    small
+                    name="ios-arrow-forward"
+                    style={styles.listIcon}
+                  />
+                  <Text style={styles.itemName}>{item.name}</Text>
+                </TouchableOpacity>
+              }
+            />
+          </Fade>
         );
       }}
     />

@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useEffect } from "react";
 
 const ACTIONS = {
   CLEAR_LIST: "CLEAR_LIST",
@@ -45,7 +45,36 @@ const useNewItemsListReducer = () => {
   const setNumberOfInputs = numberOfInputs =>
     dispatch({ type: ACTIONS.SET_INPUT_FIELDS, numberOfInputs });
 
-  return { state, clearList, setList, setIsAddingNewItems, setNumberOfInputs };
+  const addNewInputField = () => {
+    const { newItemsList, numberOfInputs, isAddingNewItems } = state;
+    const isListEmpty = !newItemsList.length && numberOfInputs < 1;
+    const needMoreInputs = newItemsList.length >= numberOfInputs;
+
+    if (isListEmpty || needMoreInputs) {
+      setNumberOfInputs(numberOfInputs + 1);
+      if (!isAddingNewItems) {
+        setIsAddingNewItems(true);
+      }
+    }
+  };
+  const useAutoAddInputFieldEffect = () => {
+    const { newItemsList, numberOfInputs, isAddingNewItems } = state;
+
+    return useEffect(() => {
+      if (isAddingNewItems) {
+        addNewInputField({ newItemsList, numberOfInputs, isAddingNewItems });
+      }
+    }, [newItemsList]);
+  };
+  return {
+    state,
+    clearList,
+    setList,
+    setIsAddingNewItems,
+    setNumberOfInputs,
+    addNewInputField,
+    useAutoAddInputFieldEffect
+  };
 };
 
 export default useNewItemsListReducer;

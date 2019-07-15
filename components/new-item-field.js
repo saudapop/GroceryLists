@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { StyleSheet, TextInput, View, Dimensions } from "react-native";
 import { Icon, Button } from "native-base";
-import { NewItemsContext } from "GroceryLists/hooks/new-items-reducer";
+import { NewItemsContext } from "GroceryLists/hooks/new-items-hooks";
 import { COLORS } from "GroceryLists/constants/colors";
 
 export const NewItemField = () => {

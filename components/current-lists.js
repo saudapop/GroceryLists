@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from "react";
+import { sortBy } from "lodash";
 import { StyleSheet, View, RefreshControl } from "react-native";
 import { Content } from "native-base";
 import { StateContext } from "GroceryLists/database-service/database-service";
@@ -7,14 +8,17 @@ import { ActiveStoreItems } from "GroceryLists/components/active-store-items";
 import { LoadingSpinner } from "GroceryLists/components/loading-spinner";
 import { COLORS } from "GroceryLists/constants/colors";
 import { useCurrentRowState } from "GroceryLists/hooks/current-row-state";
+import { Fade } from "GroceryLists/animations/fade";
 
 const CurrentLists = () => {
-  const { state, setCurrentStore, refresh } = useContext(StateContext);
-  const { refs, setRefs, currentRow, setCurrentRow } = useCurrentRowState();
+  const { state, setCurrentStore, refresh, toggleListExpanded } = useContext(
+    StateContext
+  );
+  const { refs, currentRow, setCurrentRow } = useCurrentRowState();
 
   (function closeSelectedItemOnStoreSwipe() {
     useEffect(() => {
-      if (currentRow) {
+      if (currentRow && currentRow._root && state.currentStore) {
         currentRow._root.closeRow();
       }
     }, [state.currentStore]);
@@ -28,23 +32,29 @@ const CurrentLists = () => {
     }, [currentRow]);
   })();
 
-  const content = state.stores
-    .sort((a, b) => a.storeName > b.storeName)
-    .map(store => (
-      <React.Fragment key={store.storeName}>
-        <StoreHeader store={store} />
+  const content = sortBy(state.stores, ["storeName"]).map(store => (
+    <React.Fragment key={store.storeName}>
+      <StoreHeader
+        store={store}
+        toggleList={() => {
+          store.isActiveListExpanded = !store.isActiveListExpanded;
+          toggleListExpanded(store);
+        }}
+        listType={"isActiveListExpanded"}
+      />
+      <Fade visible={store.isActiveListExpanded}>
         <ActiveStoreItems
           store={store}
           items={store.items.filter(item => item.isActive === true)}
           currentRowState={{
             refs,
-            setRefs,
             setCurrentRow,
             currentRow
           }}
         />
-      </React.Fragment>
-    ));
+      </Fade>
+    </React.Fragment>
+  ));
 
   return !state.isLoading ? (
     <Content
@@ -53,12 +63,12 @@ const CurrentLists = () => {
       refreshControl={
         <RefreshControl
           refreshing={state.isLoading}
-          onRefresh={() => refresh(state)}
+          onRefresh={() => refresh()}
         />
       }
     >
       <View style={styles.storesListContainer}>
-        {state.stores.length && content}
+        {state.stores && state.stores.length && content}
       </View>
     </Content>
   ) : (
