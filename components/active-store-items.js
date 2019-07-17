@@ -67,15 +67,10 @@ const ActiveStoreItems = ({ store, items, currentRowState }) => {
               right={
                 <Button
                   danger
-                  onPress={async () => {
+                  onPress={() => {
                     const newItemsVisibility = itemsVisibility;
                     newItemsVisibility[id] = false;
                     setItemsVisibility(newItemsVisibility);
-                    setTimeout(
-                      () => updateItems({ store, items: [item.name], state }),
-                      0
-                    );
-
                     setCurrentRow(null);
                   }}
                 >

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { StyleSheet, TextInput, View, Dimensions } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 import { Icon, Button } from "native-base";
 import { NewItemsContext } from "GroceryLists/hooks/new-items-hooks";
 import { COLORS } from "GroceryLists/constants/colors";
@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     backgroundColor: COLORS.WHITE,
-    width: Dimensions.get("window").width,
     paddingTop: 5,
     paddingLeft: 5,
     height: 40

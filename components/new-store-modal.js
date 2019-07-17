@@ -1,6 +1,6 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { Text, Button, Content } from "native-base";
-import { StyleSheet, Modal, View, TextInput } from "react-native";
+import { StyleSheet, Modal, View, TextInput, ScrollView } from "react-native";
 import { StateContext } from "GroceryLists/database-service/database-service";
 import useNewItemsListReducer, {
   NewItemsContext
@@ -18,7 +18,7 @@ export const NewStoreModal = props => {
 
 const ModalContent = ({ show, onCancel }) => {
   const [storeName, setStoreName] = useState("");
-  const { updateItems } = useContext(StateContext);
+  const { updateItems, setLoading } = useContext(StateContext);
 
   const {
     state,
@@ -32,6 +32,7 @@ const ModalContent = ({ show, onCancel }) => {
   useAutoAddInputFieldEffect();
 
   const onStoreCreate = () => {
+    setLoading();
     updateItems({ store: { storeName }, items: newItemsList });
     clearList();
     onCancel();
@@ -47,9 +48,9 @@ const ModalContent = ({ show, onCancel }) => {
       <TransparentBackground />
       <Content contentContainerStyle={styles.contentContainer}>
         <View style={styles.mainView}>
-          <View style={{ padding: 20 }}>
+          <View style={styles.formContainer}>
             <Text style={{ color: COLORS.WHITE }}>Enter new store name:</Text>
-            <View style={styles.form}>
+            <View style={styles.storeNameInput}>
               <TextInput
                 value={storeName}
                 onChangeText={text => setStoreName(text)}
@@ -63,15 +64,16 @@ const ModalContent = ({ show, onCancel }) => {
                 placeholderTextColor={COLORS.DARK_GRAY}
               />
             </View>
-            <View>
-              {!!numberOfInputs && (
+            {!!numberOfInputs && (
+              <ScrollView style={styles.addItemsScrollContainer}>
                 <AddItemsContainer
                   numberOfInputs={numberOfInputs}
                   newItemsList={newItemsList}
                   storeName={storeName}
+                  additionalStyles={styles.addItemsContainerAdditionalStyles}
                 />
-              )}
-            </View>
+              </ScrollView>
+            )}
           </View>
           <ActionButtons
             onStoreCreate={onStoreCreate}
@@ -128,7 +130,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 0.5
   },
-  form: {
+  formContainer: {
+    display: "flex",
+    height: "80%",
+    paddingTop: 20,
+    paddingLeft: 10,
+    paddingRight: 10
+  },
+  storeNameInput: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -137,6 +146,15 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.WHITE,
     borderWidth: 3
   },
+  addItemsScrollContainer: {
+    maxHeight: "70%",
+    marginTop: 20,
+    marginBottom: 0
+  },
+  addItemsContainerAdditionalStyles: {
+    width: "80%",
+    alignSelf: "center"
+  },
   buttonContainer: {
     width: "90%",
     padding: 10,
@@ -144,8 +162,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignSelf: "center",
-    alignItems: "center",
-    padding: 10,
-    borderWidth: 3
+    alignItems: "center"
   }
 });

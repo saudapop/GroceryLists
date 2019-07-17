@@ -32,17 +32,20 @@ const useListReducer = () => {
     });
   };
   const fetchItems = stores => {
-    const newState = stores.map(store => {
-      const oldStore = state.stores.filter(
-        old => old.storeName === store.storeName
-      )[0];
-      const newStore = {
-        ...store,
-        isActiveListExpanded: oldStore.isActiveListExpanded,
-        isPreviousListExpanded: oldStore.isPreviousListExpanded
-      };
-      return newStore;
-    });
+    let newState = stores;
+    if (state.stores) {
+      newState = stores.map(store => {
+        const oldStore = state.stores.filter(
+          old => old.storeName === store.storeName
+        )[0];
+        const newStore = {
+          ...store,
+          isActiveListExpanded: oldStore.isActiveListExpanded,
+          isPreviousListExpanded: oldStore.isPreviousListExpanded
+        };
+        return newStore;
+      });
+    }
     dispatch({ type: ACTIONS.FETCH_ITEMS, stores: newState });
   };
   const setLoading = () => {

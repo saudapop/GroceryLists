@@ -8,7 +8,8 @@ export const AddItemsContainer = ({
   numberOfInputs,
   newItemsList,
   onAddItems,
-  storeName
+  storeName,
+  additionalStyles
 }) => {
   const getAddItemsText = () => {
     let res;
@@ -25,7 +26,13 @@ export const AddItemsContainer = ({
   };
 
   return (
-    <View style={styles.addItemsContainer}>
+    <View
+      style={
+        additionalStyles
+          ? [additionalStyles, styles.addItemsContainer]
+          : styles.addItemsContainer
+      }
+    >
       {Array(numberOfInputs)
         .fill()
         .map((_, i) => (
