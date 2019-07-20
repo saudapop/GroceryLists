@@ -116,12 +116,20 @@ function mapListExpansionState({ updatedStores, oldStores }) {
     const oldStore = oldStores.filter(
       old => old.storeName === store.storeName
     )[0];
-    const newStore = {
-      ...store,
-      isActiveListExpanded: oldStore.isActiveListExpanded,
-      isPreviousListExpanded: oldStore.isPreviousListExpanded
-    };
-    return newStore;
+    if (oldStore) {
+      const newStore = {
+        ...store,
+        isActiveListExpanded: oldStore.isActiveListExpanded,
+        isPreviousListExpanded: oldStore.isPreviousListExpanded
+      };
+      return newStore;
+    } else {
+      return {
+        ...store,
+        isActiveListExpanded: true,
+        isPreviousListExpanded: true
+      };
+    }
   });
 
   return newState;
