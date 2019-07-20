@@ -97,9 +97,14 @@ export default (DatabaseService = {
       console.log(`${items} added to ${storeName} list\n`);
     }
 
+    const newStore = {
+      storeName: store.storeName,
+      items: store.items
+    };
+
     await state.collection.updateOne(
       { storeName },
-      { $set: store },
+      { $set: newStore },
       { upsert: true }
     );
   }

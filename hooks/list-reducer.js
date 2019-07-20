@@ -31,40 +31,40 @@ const useListReducer = () => {
       newState: await DatabaseService.getInitialState()
     });
   };
-  const fetchItems = stores => {
-    let newState = stores;
-    if (state.stores) {
-      newState = stores.map(store => {
-        const oldStore = state.stores.filter(
-          old => old.storeName === store.storeName
-        )[0];
-        const newStore = {
-          ...store,
-          isActiveListExpanded: oldStore.isActiveListExpanded,
-          isPreviousListExpanded: oldStore.isPreviousListExpanded
-        };
-        return newStore;
-      });
-    }
-    dispatch({ type: ACTIONS.FETCH_ITEMS, stores: newState });
+
+  const fetchItems = ({ updatedStores, oldStores }) => {
+    const newStores = mapListExpansionState({ updatedStores, oldStores });
+    dispatch({ type: ACTIONS.FETCH_ITEMS, stores: newStores });
   };
+
   const setLoading = () => {
     dispatch({ type: ACTIONS.SET_LOADING });
   };
+
   const refresh = async () => {
     dispatch({ type: ACTIONS.SET_LOADING });
+    const oldStores = state.stores;
     setTimeout(
-      async () => fetchItems(await DatabaseService.fetchStores(state)),
+      async () =>
+        fetchItems({
+          updatedStores: await DatabaseService.fetchStores(state),
+          oldStores
+        }),
       1500
     );
   };
+
   const updateItems = async ({ store, items }) => {
+    const oldStores = state.stores;
     await DatabaseService.updateItemsFromStore({
       state,
       storeName: store.storeName,
       items
     });
-    fetchItems(await DatabaseService.fetchStores(state));
+    fetchItems({
+      updatedStores: await DatabaseService.fetchStores(state),
+      oldStores
+    });
   };
 
   const setCurrentStore = currentStore =>
@@ -110,5 +110,21 @@ const ACTIONS = {
   TOGGLE_LIST_EXPANDED: "TOGGLE_LIST_EXPANDED",
   SELECT_TAB: "SELECT_TAB"
 };
+
+function mapListExpansionState({ updatedStores, oldStores }) {
+  const newState = updatedStores.map(store => {
+    const oldStore = oldStores.filter(
+      old => old.storeName === store.storeName
+    )[0];
+    const newStore = {
+      ...store,
+      isActiveListExpanded: oldStore.isActiveListExpanded,
+      isPreviousListExpanded: oldStore.isPreviousListExpanded
+    };
+    return newStore;
+  });
+
+  return newState;
+}
 
 export { useListReducer, ACTIONS };

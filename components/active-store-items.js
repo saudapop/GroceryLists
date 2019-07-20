@@ -6,7 +6,7 @@ import { StateContext } from "GroceryLists/database-service/database-service";
 import { COLORS } from "GroceryLists/constants/colors";
 import { Fade } from "GroceryLists/animations/fade";
 const ActiveStoreItems = ({ store, items, currentRowState }) => {
-  const { state, updateItems } = useContext(StateContext);
+  const { updateItems } = useContext(StateContext);
   const { refs, currentRow, setCurrentRow } = currentRowState;
   const [itemsVisibility, setItemsVisibility] = useState({});
 
@@ -72,6 +72,10 @@ const ActiveStoreItems = ({ store, items, currentRowState }) => {
                     newItemsVisibility[id] = false;
                     setItemsVisibility(newItemsVisibility);
                     setCurrentRow(null);
+                    setTimeout(
+                      () => updateItems({ store, items: [item.name] }),
+                      0
+                    );
                   }}
                 >
                   <Icon active name="ios-remove-circle-outline" />
