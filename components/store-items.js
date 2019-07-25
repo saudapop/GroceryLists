@@ -1,22 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { isEqual } from "lodash";
 import { StyleSheet, Text, FlatList, TouchableOpacity } from "react-native";
 import { SwipeRow, Icon } from "native-base";
 import { COLORS } from "GroceryLists/constants/colors";
 import { Fade } from "GroceryLists/animations/fade";
 
-const StoreItems = ({
-  store,
-  items,
-  currentRowState,
-  colors,
-  rightButton,
-  itemsVisibility,
-  setItemsVisibility
-}) => {
+const StoreItems = ({ store, items, currentRowState, colors, rightButton }) => {
   const { refs, currentRow, setCurrentRow } = currentRowState;
+  const [itemsVisibility, setItemsVisibility] = useState({});
 
-  // TODO: figure out item animation without annoying refresh;
+  // TODO: repair remove item animation
 
   useEffect(() => {
     items.forEach(item => {
@@ -71,7 +64,16 @@ const StoreItems = ({
                 backgroundColor: index % 2 ? colors.primary : colors.secondary
               }}
               rightOpenValue={rightButton && -50}
-              right={rightButton && rightButton(store, item.name, id)}
+              right={
+                rightButton &&
+                rightButton(
+                  store,
+                  item.name,
+                  id,
+                  itemsVisibility,
+                  setItemsVisibility
+                )
+              }
               body={
                 <TouchableOpacity
                   onPress={() => console.log(item.name)}

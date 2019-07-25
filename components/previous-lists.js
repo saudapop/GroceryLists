@@ -5,7 +5,7 @@ import { COLORS } from "GroceryLists/constants/colors";
 import { useCurrentRowState } from "GroceryLists/hooks/current-row-state";
 import { StoresLists } from "GroceryLists/components/stores-lists";
 
-const CurrentLists = () => {
+const PreviousLists = () => {
   const { updateItems } = useContext(StateContext);
   const { setCurrentRow } = useCurrentRowState();
 
@@ -44,9 +44,9 @@ const CurrentLists = () => {
 
   return (
     <StoresLists
-      isActiveItems={true}
-      listType="isActiveListExpanded"
-      colors={{ primary: COLORS.LIGHT_BLUE, secondary: COLORS.ACCENT_BLUE }}
+      isActiveItems={false}
+      listType="isPreviousListExpanded"
+      colors={{ primary: COLORS.LIGHT_PINK, secondary: COLORS.ACCENT_PINK }}
       itemRightButton={(
         store,
         item,
@@ -55,7 +55,6 @@ const CurrentLists = () => {
         setItemsVisibility
       ) => (
         <Button
-          danger
           onPress={() =>
             removeItemFromList({
               store,
@@ -66,15 +65,15 @@ const CurrentLists = () => {
             })
           }
         >
-          <Icon active name="ios-remove-circle-outline" />
+          <Icon active name="ios-add-circle" />
         </Button>
       )}
-      headerButtons={{
-        rightAction: clearStoreInputList,
-        leftAction: addNewItemInputField
-      }}
+      // headerButtons={{
+      //   rightAction: clearStoreInputList,
+      //   leftAction: addNewItemInputField
+      // }}
     />
   );
 };
 
-export { CurrentLists };
+export { PreviousLists };

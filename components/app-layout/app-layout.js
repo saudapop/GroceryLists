@@ -1,4 +1,5 @@
 import React from "react";
+import { debounce } from "lodash";
 import {
   Header,
   Title,
@@ -11,7 +12,7 @@ import {
 } from "native-base";
 import { TABS } from "GroceryLists/constants/tabs";
 
-export const AppHeader = ({ toggleAllListsExpanded, styles }) => (
+export const AppHeader = ({ toggleAllListsExpanded, currentList, styles }) => (
   <Header iosBarStyle="light-content" style={styles.headerContainer}>
     <Icon
       style={styles.headerIcon}
@@ -25,7 +26,7 @@ export const AppHeader = ({ toggleAllListsExpanded, styles }) => (
       style={styles.toggleListIcon}
       type="MaterialCommunityIcons"
       name="arrow-collapse"
-      onPress={() => toggleAllListsExpanded("isActiveListExpanded")}
+      onPress={debounce(() => toggleAllListsExpanded(currentList), 500)}
     />
   </Header>
 );
@@ -47,7 +48,10 @@ export const AppFooter = ({ selectTab, currentTab, styles }) => (
         <Icon type="FontAwesome5" name="store-alt" />
         <Text>Add new store</Text>
       </Button>
-      <Button>
+      <Button
+        active={currentTab === TABS.PREVIOUS_LISTS}
+        onPress={() => selectTab(TABS.PREVIOUS_LISTS)}
+      >
         <Icon type="FontAwesome5" name="book" />
         <Text>Prev. Items</Text>
       </Button>

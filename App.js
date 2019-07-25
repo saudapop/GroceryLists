@@ -1,27 +1,19 @@
 import React, { useContext, useEffect } from "react";
-import {
-  Root,
-  Header,
-  Container,
-  Title,
-  Body,
-  Footer,
-  FooterTab,
-  Text,
-  Icon,
-  Button
-} from "native-base";
+import { Root, Container } from "native-base";
 import { StyleSheet } from "react-native";
 import { StateContext } from "GroceryLists/database-service/database-service";
 import { useListReducer } from "GroceryLists/hooks/list-reducer";
 import { TABS } from "GroceryLists/constants/tabs";
 import { COLORS } from "GroceryLists/constants/colors";
 import { CurrentLists } from "GroceryLists/components/current-lists";
+import { PreviousLists } from "GroceryLists/components/previous-lists";
+
 import { NewStoreModal } from "GroceryLists/components/new-store-modal";
 import {
   AppHeader,
   AppFooter
 } from "GroceryLists/components/app-layout/app-layout";
+
 const App = () => {
   return (
     <StateContext.Provider value={useListReducer()}>
@@ -56,16 +48,20 @@ const AppContent = () => {
     <Container style={styles.appContainer}>
       <AppHeader
         toggleAllListsExpanded={toggleAllListsExpanded}
+        currentList={
+          state.currentTab === TABS.CURRENT_LISTS
+            ? "isActiveListExpanded"
+            : "isPreviousListExpanded"
+        }
         styles={styles}
       />
-      {(state.currentTab === TABS.CURRENT_LISTS || TABS.ADD_NEW_STORE) && (
-        <CurrentLists />
-      )}
+      {(state.currentTab === TABS.CURRENT_LISTS ||
+        state.currentTab === TABS.ADD_NEW_STORE) && <CurrentLists />}
       <NewStoreModal
         show={state.currentTab === TABS.ADD_NEW_STORE}
         onCancel={() => selectTab(TABS.CURRENT_LISTS)}
       />
-
+      {state.currentTab === TABS.PREVIOUS_LISTS && <PreviousLists />}
       <AppFooter
         selectTab={selectTab}
         currentTab={state.currentTab}

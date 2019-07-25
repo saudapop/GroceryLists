@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { sortBy } from "lodash";
 import { StyleSheet, View, RefreshControl } from "react-native";
 import { Content } from "native-base";
@@ -32,34 +32,38 @@ const StoresLists = ({
 
   closeStoreOnItemSwipeHook({ state, setCurrentStore, currentRow });
 
-  const content = sortBy(state.stores, ["storeName"]).map(store => (
-    <React.Fragment key={store.storeName}>
-      <StoreHeader
-        store={store}
-        toggleList={() => {
-          store[listType] = !store[listType];
-          toggleListExpanded(store);
-        }}
-        listType={listType}
-        headerButtons={headerButtons}
-      />
-      <Fade visible={store.isActiveListExpanded}>
-        <StoreItems
+  const content = sortBy(state.stores, ["storeName"]).map(store => {
+    const items = store.items.filter(item => item.isActive === isActiveItems);
+    return (
+      <React.Fragment key={store.storeName}>
+        <StoreHeader
           store={store}
-          items={store.items.filter(item => item.isActive === isActiveItems)}
-          currentRowState={{
-            refs,
-            setCurrentRow,
-            currentRow
+          toggleList={() => {
+            store[listType] = !store[listType];
+            toggleListExpanded(store);
           }}
-          colors={colors}
-          itemsVisibility={itemsVisibility}
-          setItemsVisibility={setItemsVisibility}
-          rightButton={itemRightButton}
+          items={items}
+          listType={listType}
+          headerButtons={headerButtons}
         />
-      </Fade>
-    </React.Fragment>
-  ));
+        <Fade visible={store[listType]}>
+          <StoreItems
+            store={store}
+            items={items}
+            currentRowState={{
+              refs,
+              setCurrentRow,
+              currentRow
+            }}
+            colors={colors}
+            itemsVisibility={itemsVisibility}
+            setItemsVisibility={setItemsVisibility}
+            rightButton={itemRightButton}
+          />
+        </Fade>
+      </React.Fragment>
+    );
+  });
 
   return !state.isLoading ? (
     <Content

@@ -8,11 +8,18 @@ import useNewItemsListReducer, {
 import { AddItemsContainer } from "GroceryLists/components/add-items-container.js";
 import { COLORS } from "../constants/colors";
 
-export const StoreHeader = ({ store, toggleList, listType, headerButtons }) => {
+export const StoreHeader = ({
+  store,
+  items,
+  toggleList,
+  listType,
+  headerButtons
+}) => {
   return (
     <NewItemsContext.Provider value={useNewItemsListReducer()}>
       <HeaderContent
         store={store}
+        items={items}
         toggleList={toggleList}
         listType={listType}
         headerButtons={headerButtons}
@@ -21,7 +28,13 @@ export const StoreHeader = ({ store, toggleList, listType, headerButtons }) => {
   );
 };
 
-const HeaderContent = ({ store, toggleList, listType, headerButtons }) => {
+const HeaderContent = ({
+  store,
+  items,
+  toggleList,
+  listType,
+  headerButtons
+}) => {
   const { updateItems, state: stateContext, setCurrentStore } = useContext(
     StateContext
   );
@@ -58,23 +71,27 @@ const HeaderContent = ({ store, toggleList, listType, headerButtons }) => {
       component._root._translateX._value < -25 &&
       component._root._translateX._value < -150;
     if (isLeft) {
-      onLeftAction();
+      onLeftAction && onLeftAction();
     }
     if (isRight) {
-      onRightAction();
+      onLeftAction && onRightAction();
     }
     setCurrentStore(store.storeName);
   }
 
-  const onRightAction = headerButtons.rightAction({
-    NewItemsContext,
-    component
-  });
+  const onRightAction =
+    headerButtons &&
+    headerButtons.rightAction({
+      NewItemsContext,
+      component
+    });
 
-  const onLeftAction = headerButtons.leftAction({
-    NewItemsContext,
-    component
-  });
+  const onLeftAction =
+    headerButtons &&
+    headerButtons.leftAction({
+      NewItemsContext,
+      component
+    });
 
   return (
     <>
@@ -83,7 +100,15 @@ const HeaderContent = ({ store, toggleList, listType, headerButtons }) => {
         style={styles.container}
         body={
           <View style={styles.body}>
-            <Text style={styles.storeName}>{store.storeName}</Text>
+            <Text
+              style={{
+                ...styles.storeName,
+                fontSize: items.length === 0 ? 15 : 25
+              }}
+            >
+              {store.storeName}
+              <Text style={styles.itemsLength}>{` (${items.length})`}</Text>
+            </Text>
             <Icon
               type="FontAwesome5"
               name={store[listType] ? "chevron-down" : "chevron-up"}
@@ -147,6 +172,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center"
+  },
+  itemsLength: {
+    color: COLORS.MEDIUM_GRAY
   },
   swipeButton: {
     marginTop: 1,
