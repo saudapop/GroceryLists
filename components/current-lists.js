@@ -9,18 +9,8 @@ const CurrentLists = () => {
   const { updateItems } = useContext(StateContext);
   const { setCurrentRow } = useCurrentRowState();
 
-  function removeItemFromList({
-    store,
-    item,
-    id,
-    itemsVisibility,
-    setItemsVisibility
-  }) {
-    const newItemsVisibility = itemsVisibility;
-    newItemsVisibility[id] = false;
-    setItemsVisibility(newItemsVisibility);
-    setCurrentRow(null);
-    setTimeout(() => updateItems({ store, items: [item] }), 0);
+  function removeItemFromList({ store, item }) {
+    updateItems({ store, items: [item] });
   }
 
   function clearStoreInputList({ NewItemsContext, component }) {
@@ -47,28 +37,15 @@ const CurrentLists = () => {
       isActiveItems={true}
       listType="isActiveListExpanded"
       colors={{ primary: COLORS.LIGHT_BLUE, secondary: COLORS.ACCENT_BLUE }}
-      itemRightButton={(
-        store,
-        item,
-        id,
-        itemsVisibility,
-        setItemsVisibility
-      ) => (
-        <Button
-          danger
-          onPress={() =>
-            removeItemFromList({
-              store,
-              item,
-              id,
-              itemsVisibility,
-              setItemsVisibility
-            })
-          }
-        >
-          <Icon active name="ios-remove-circle-outline" />
-        </Button>
-      )}
+      itemRightButton={{
+        component: ({ action }) => (
+          <Button danger onPress={action}>
+            <Icon active name="ios-remove-circle-outline" />
+          </Button>
+        ),
+        action: removeItemFromList,
+        color: COLORS.RED
+      }}
       headerButtons={{
         rightAction: clearStoreInputList,
         leftAction: addNewItemInputField

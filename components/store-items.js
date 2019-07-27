@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { isEqual } from "lodash";
 import { StyleSheet, Text, FlatList, TouchableOpacity } from "react-native";
-import { SwipeRow, Icon } from "native-base";
+import { Icon } from "native-base";
 import { COLORS } from "GroceryLists/constants/colors";
 import { Fade } from "GroceryLists/animations/fade";
-
-const StoreItems = ({ store, items, currentRowState, colors, rightButton }) => {
+import { SwipeRow } from "GroceryLists/components/swipe-row.js";
+const StoreItems = ({
+  store,
+  items,
+  currentRowState,
+  colors,
+  rightButton,
+  setIsScrollEnabled
+}) => {
   const { refs, currentRow, setCurrentRow } = currentRowState;
   const [itemsVisibility, setItemsVisibility] = useState({});
 
@@ -42,16 +49,24 @@ const StoreItems = ({ store, items, currentRowState, colors, rightButton }) => {
     }
     setCurrentRow(refs.current[id]);
   }
-
   return (
     <FlatList
       data={items}
+      keyExtractor={(item, index) => `${item.name}-${index}`}
+      scrollEnabled={false}
       renderItem={({ item, index }) => {
         const id = `${store.storeName}-${item.name}`;
         getItemsVisibility(id);
         return (
           <Fade visible={itemsVisibility[id]}>
             <SwipeRow
+              item={item}
+              store={store}
+              setIsScrollEnabled={setIsScrollEnabled}
+              rightButton={rightButton}
+              color={index % 2 ? colors.primary : colors.secondary}
+            />
+            {/* <SwipeRow
               ref={c => {
                 const newRefs = refs.current;
                 newRefs[id] = { ...c, id };
@@ -87,7 +102,7 @@ const StoreItems = ({ store, items, currentRowState, colors, rightButton }) => {
                   <Text style={styles.itemName}>{item.name}</Text>
                 </TouchableOpacity>
               }
-            />
+            /> */}
           </Fade>
         );
       }}

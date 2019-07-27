@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { sortBy } from "lodash";
 import { StyleSheet, View, RefreshControl } from "react-native";
 import { Content } from "native-base";
@@ -27,6 +27,7 @@ const StoresLists = ({
     StateContext
   );
   const { refs, currentRow, setCurrentRow } = useCurrentRowState();
+  const [isScrollEnabled, setIsScrollEnabled] = useState(true);
 
   closeItemOnStoreSwipeHook({ currentRow, state });
 
@@ -56,6 +57,7 @@ const StoresLists = ({
               currentRow
             }}
             colors={colors}
+            setIsScrollEnabled={setIsScrollEnabled}
             itemsVisibility={itemsVisibility}
             setItemsVisibility={setItemsVisibility}
             rightButton={itemRightButton}
@@ -70,6 +72,7 @@ const StoresLists = ({
       style={styles.contentContainer}
       keyboardShouldPersistTaps="never"
       enableResetScrollToCoords={false}
+      scrollEnabled={isScrollEnabled}
       refreshControl={
         <RefreshControl
           refreshing={state.isLoading}
