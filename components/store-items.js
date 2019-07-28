@@ -1,25 +1,22 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { isEqual } from "lodash";
 import { StyleSheet, Text, FlatList, TouchableOpacity } from "react-native";
-import { SwipeRow, Button, Icon } from "native-base";
-import { StateContext } from "GroceryLists/database-service/database-service";
+import { Icon } from "native-base";
 import { COLORS } from "GroceryLists/constants/colors";
 import { Fade } from "GroceryLists/animations/fade";
-const ActiveStoreItems = ({ store, items, currentRowState }) => {
-  const { updateItems } = useContext(StateContext);
+import { SwipeRow } from "GroceryLists/components/swipe-row.js";
+const StoreItems = ({
+  store,
+  items,
+  currentRowState,
+  colors,
+  rightButton,
+  setIsScrollEnabled
+}) => {
   const { refs, currentRow, setCurrentRow } = currentRowState;
   const [itemsVisibility, setItemsVisibility] = useState({});
 
-  const getItemsVisibility = id => {
-    const isItemListed = Object.keys(itemsVisibility).some(
-      visibleItem => visibleItem === id
-    );
-    if (!isItemListed) {
-      const newItemsVisibility = itemsVisibility;
-      newItemsVisibility[id] = true;
-      setItemsVisibility(newItemsVisibility);
-    }
-  };
+  // TODO: repair remove item animation
 
   useEffect(() => {
     items.forEach(item => {
@@ -32,54 +29,65 @@ const ActiveStoreItems = ({ store, items, currentRowState }) => {
     });
   }, [items]);
 
+  function getItemsVisibility(id) {
+    const isItemListed = Object.keys(itemsVisibility).some(
+      visibleItem => visibleItem === id
+    );
+    if (!isItemListed) {
+      const newItemsVisibility = itemsVisibility;
+      newItemsVisibility[id] = true;
+      setItemsVisibility(newItemsVisibility);
+    }
+  }
+
+  function handleRowOpen(id) {
+    const thisRow = refs.current[id];
+    const openingNewRow =
+      currentRow && currentRow._root && !isEqual(currentRow.id, thisRow.id);
+    if (openingNewRow) {
+      currentRow._root.closeRow();
+    }
+    setCurrentRow(refs.current[id]);
+  }
   return (
     <FlatList
       data={items}
+      keyExtractor={(item, index) => `${item.name}-${index}`}
+      scrollEnabled={false}
       renderItem={({ item, index }) => {
         const id = `${store.storeName}-${item.name}`;
         getItemsVisibility(id);
         return (
           <Fade visible={itemsVisibility[id]}>
             <SwipeRow
+              item={item}
+              store={store}
+              setIsScrollEnabled={setIsScrollEnabled}
+              rightButton={rightButton}
+              color={index % 2 ? colors.primary : colors.secondary}
+            />
+            {/* <SwipeRow
               ref={c => {
                 const newRefs = refs.current;
                 newRefs[id] = { ...c, id };
                 refs.current = newRefs;
               }}
-              onRowOpen={() => {
-                const thisRow = refs.current[id];
-                const openingNewRow =
-                  currentRow &&
-                  currentRow._root &&
-                  !isEqual(currentRow.id, thisRow.id);
-                if (openingNewRow) {
-                  currentRow._root.closeRow();
-                }
-                setCurrentRow(refs.current[id]);
-              }}
+              onRowOpen={() => handleRowOpen(id)}
               key={item.name}
               style={{
                 ...styles.itemContainer,
-                backgroundColor:
-                  index % 2 ? COLORS.LIGHT_BLUE : COLORS.ACCENT_BLUE
+                backgroundColor: index % 2 ? colors.primary : colors.secondary
               }}
-              rightOpenValue={-50}
+              rightOpenValue={rightButton && -50}
               right={
-                <Button
-                  danger
-                  onPress={() => {
-                    const newItemsVisibility = itemsVisibility;
-                    newItemsVisibility[id] = false;
-                    setItemsVisibility(newItemsVisibility);
-                    setCurrentRow(null);
-                    setTimeout(
-                      () => updateItems({ store, items: [item.name] }),
-                      0
-                    );
-                  }}
-                >
-                  <Icon active name="ios-remove-circle-outline" />
-                </Button>
+                rightButton &&
+                rightButton(
+                  store,
+                  item.name,
+                  id,
+                  itemsVisibility,
+                  setItemsVisibility
+                )
               }
               body={
                 <TouchableOpacity
@@ -94,7 +102,7 @@ const ActiveStoreItems = ({ store, items, currentRowState }) => {
                   <Text style={styles.itemName}>{item.name}</Text>
                 </TouchableOpacity>
               }
-            />
+            /> */}
           </Fade>
         );
       }}
@@ -102,7 +110,7 @@ const ActiveStoreItems = ({ store, items, currentRowState }) => {
   );
 };
 
-export { ActiveStoreItems };
+export { StoreItems };
 
 const styles = StyleSheet.create({
   contentContainer: {

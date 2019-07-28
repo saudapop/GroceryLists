@@ -1,11 +1,17 @@
 const COLORS = {
   WHITE: "#FCFFFD",
   GRAY: "#D7DAE5",
+  MEDIUM_GRAY: "gray",
   DARK_GRAY: "#303032",
   LIGHT_BLUE: "#EDF7FF",
   ACCENT_BLUE: "#C4DEF2",
-  SHARP_BLUE: "#2F7CF6",
-  SUCCESS: "#74B566"
+  SHARP_BLUE: "#007AFF",
+  SUCCESS: "#74B566",
+
+  LIGHT_PINK: "#ffe7ea",
+  ACCENT_PINK: "#FFC2CA",
+
+  RED: "#d9534f"
 };
 
 export { COLORS };

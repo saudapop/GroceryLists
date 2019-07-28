@@ -1,114 +1,57 @@
-import React, { useContext, useEffect } from "react";
-import { sortBy } from "lodash";
-import { StyleSheet, View, RefreshControl } from "react-native";
-import { Content } from "native-base";
+import React, { useContext } from "react";
+import { Button, Icon } from "native-base";
 import { StateContext } from "GroceryLists/database-service/database-service";
-import { StoreHeader } from "GroceryLists/components/store-header";
-import { ActiveStoreItems } from "GroceryLists/components/active-store-items";
-import { LoadingSpinner } from "GroceryLists/components/loading-spinner";
 import { COLORS } from "GroceryLists/constants/colors";
 import { useCurrentRowState } from "GroceryLists/hooks/current-row-state";
-import { Fade } from "GroceryLists/animations/fade";
+import { StoresLists } from "GroceryLists/components/stores-lists";
 
 const CurrentLists = () => {
-  const { state, setCurrentStore, refresh, toggleListExpanded } = useContext(
-    StateContext
-  );
-  const { refs, currentRow, setCurrentRow } = useCurrentRowState();
+  const { updateItems } = useContext(StateContext);
+  const { setCurrentRow } = useCurrentRowState();
 
-  (function closeSelectedItemOnStoreSwipe() {
-    useEffect(() => {
-      if (currentRow && currentRow._root && state.currentStore) {
-        currentRow._root.closeRow();
-      }
-    }, [state.currentStore]);
-  })();
+  function removeItemFromList({ store, item }) {
+    updateItems({ store, items: [item] });
+  }
 
-  (function closeSelectedStoreOnItemSwipe() {
-    useEffect(() => {
-      if (state.currentStore) {
-        setCurrentStore(null);
-      }
-    }, [currentRow]);
-  })();
+  function clearStoreInputList({ NewItemsContext, component }) {
+    const { setNumberOfInputs, clearList } = useContext(NewItemsContext);
 
-  const content = sortBy(state.stores, ["storeName"]).map(store => (
-    <React.Fragment key={store.storeName}>
-      <StoreHeader
-        store={store}
-        toggleList={() => {
-          store.isActiveListExpanded = !store.isActiveListExpanded;
-          toggleListExpanded(store);
-        }}
-        listType={"isActiveListExpanded"}
-      />
-      <Fade visible={store.isActiveListExpanded}>
-        <ActiveStoreItems
-          store={store}
-          items={store.items.filter(item => item.isActive === true)}
-          currentRowState={{
-            refs,
-            setCurrentRow,
-            currentRow
-          }}
-        />
-      </Fade>
-    </React.Fragment>
-  ));
+    return () => {
+      setNumberOfInputs(0);
+      component._root.closeRow();
+      clearList();
+    };
+  }
 
-  return !state.isLoading ? (
-    <Content
-      style={styles.contentContainer}
-      keyboardShouldPersistTaps="never"
-      refreshControl={
-        <RefreshControl
-          refreshing={state.isLoading}
-          onRefresh={() => refresh()}
-        />
-      }
-    >
-      <View style={styles.storesListContainer}>
-        {state.stores && state.stores.length && content}
-      </View>
-    </Content>
-  ) : (
-    <LoadingSpinner />
+  function addNewItemInputField({ NewItemsContext, component }) {
+    const { addNewInputField } = useContext(NewItemsContext);
+
+    return () => {
+      addNewInputField();
+      component._root.closeRow();
+    };
+  }
+
+  return (
+    <StoresLists
+      isActiveItems={true}
+      listType="isActiveListExpanded"
+      colors={{ primary: COLORS.LIGHT_BLUE, secondary: COLORS.ACCENT_BLUE }}
+      itemRightButton={{
+        component: ({ action }) => (
+          <Button danger onPress={action}>
+            <Icon active name="ios-remove-circle-outline" />
+          </Button>
+        ),
+        action: removeItemFromList,
+        color: COLORS.RED
+      }}
+      headerButtons={{
+        rightAction: clearStoreInputList,
+        leftAction: addNewItemInputField
+      }}
+    />
   );
 };
 
 export { CurrentLists };
-
-const styles = StyleSheet.create({
-  contentContainer: {
-    marginBottom: 1,
-    marginTop: 1
-  },
-  storesListContainer: {
-    flex: 1,
-    backgroundColor: COLORS.DARK_GRAY
-  },
-  itemContainer: {
-    display: "flex",
-    borderTopWidth: 0.15,
-    borderBottomWidth: 0.15
-  },
-  itemNameContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  itemName: {
-    fontSize: 20
-  },
-  listIcon: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 3,
-    paddingRight: 10,
-    paddingLeft: 35,
-    fontSize: 15,
-    color: COLORS.DARK_GRAY
-  }
-});
