@@ -60,6 +60,7 @@ export default (DatabaseService = {
       return initialState;
     } catch (err) {
       console.log(err);
+      alert("WHOOPS! Tell Saud to fix this: " + err.message);
     }
   },
 

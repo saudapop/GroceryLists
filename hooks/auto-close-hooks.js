@@ -2,8 +2,8 @@ import { useEffect } from "react";
 
 export function closeItemOnStoreSwipeHook({ currentRow, state }) {
   useEffect(() => {
-    if (currentRow && currentRow._root && state.currentStore) {
-      currentRow._root.closeRow();
+    if (currentRow && currentRow.name && state.currentStore) {
+      currentRow.reset();
     }
   }, [state.currentStore]);
 }

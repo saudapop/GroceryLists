@@ -38,8 +38,8 @@ const CurrentLists = () => {
       listType="isActiveListExpanded"
       colors={{ primary: COLORS.LIGHT_BLUE, secondary: COLORS.ACCENT_BLUE }}
       itemRightButton={{
-        component: ({ action }) => (
-          <Button danger onPress={action}>
+        component: ({ store, item }) => (
+          <Button danger onPress={() => removeItemFromList({ store, item })}>
             <Icon active name="ios-remove-circle-outline" />
           </Button>
         ),
