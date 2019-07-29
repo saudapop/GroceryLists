@@ -46,6 +46,7 @@ const StoresLists = ({
           items={items}
           listType={listType}
           headerButtons={headerButtons}
+          setCurrentRow={setCurrentRow}
         />
         <Fade visible={store[listType]}>
           <StoreItems

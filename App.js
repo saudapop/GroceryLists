@@ -30,8 +30,9 @@ const AppContent = () => {
   );
 
   useEffect(() => {
-    if (!state.stores.length) initialFetch();
-
+    if (!state.stores.length) {
+      initialFetch();
+    }
     return () => {
       state.client.auth
         .logout()

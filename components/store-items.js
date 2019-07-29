@@ -40,15 +40,6 @@ const StoreItems = ({
     }
   }
 
-  function handleRowOpen(id) {
-    const thisRow = refs.current[id];
-    const openingNewRow =
-      currentRow && currentRow._root && !isEqual(currentRow.id, thisRow.id);
-    if (openingNewRow) {
-      currentRow._root.closeRow();
-    }
-    setCurrentRow(refs.current[id]);
-  }
   return (
     <FlatList
       data={items}
@@ -62,47 +53,16 @@ const StoreItems = ({
             <SwipeRow
               item={item}
               store={store}
+              currentRow={currentRow}
               setIsScrollEnabled={setIsScrollEnabled}
-              rightButton={rightButton}
+              setCurrentRow={setCurrentRow}
               color={index % 2 ? colors.primary : colors.secondary}
+              rightButton={{
+                component: rightButton.component({ store, item: item.name }),
+                color: rightButton.color,
+                action: () => rightButton.action({ store, item: item.name })
+              }}
             />
-            {/* <SwipeRow
-              ref={c => {
-                const newRefs = refs.current;
-                newRefs[id] = { ...c, id };
-                refs.current = newRefs;
-              }}
-              onRowOpen={() => handleRowOpen(id)}
-              key={item.name}
-              style={{
-                ...styles.itemContainer,
-                backgroundColor: index % 2 ? colors.primary : colors.secondary
-              }}
-              rightOpenValue={rightButton && -50}
-              right={
-                rightButton &&
-                rightButton(
-                  store,
-                  item.name,
-                  id,
-                  itemsVisibility,
-                  setItemsVisibility
-                )
-              }
-              body={
-                <TouchableOpacity
-                  onPress={() => console.log(item.name)}
-                  style={styles.itemNameContainer}
-                >
-                  <Icon
-                    small
-                    name="ios-arrow-forward"
-                    style={styles.listIcon}
-                  />
-                  <Text style={styles.itemName}>{item.name}</Text>
-                </TouchableOpacity>
-              }
-            /> */}
           </Fade>
         );
       }}

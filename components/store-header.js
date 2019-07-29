@@ -33,7 +33,8 @@ const HeaderContent = ({
   items,
   toggleList,
   listType,
-  headerButtons
+  headerButtons,
+  setCurrentRow
 }) => {
   const { updateItems, state: stateContext, setCurrentStore } = useContext(
     StateContext

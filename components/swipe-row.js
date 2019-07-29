@@ -14,19 +14,32 @@ export function SwipeRow({
   item,
   store,
   rightButton,
-  setIsScrollEnabled
+  setIsScrollEnabled,
+  setCurrentRow,
+  currentRow
 }) {
   const [margin, setMargins] = useState({ right: 0, left: 0 });
+  const marginUpdater = useRef(0);
 
   useEffect(() => {
-    console.log("useEffect:", margin);
-  }, [margin]);
+    panResponder.current = getPanResponder(margin);
+  }, [marginUpdater.current]);
 
-  const panResponder = useRef(
+  useEffect(() => {
+    const thisRow = `${store.storeName}-${item.name}`;
+    if (currentRow && thisRow !== currentRow.name) {
+      resetMargins();
+      marginUpdater.current = 0;
+    }
+  }, [currentRow]);
+
+  const getPanResponder = margin =>
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
       onMoveShouldSetPanResponder: (_, { dx, dy }) => !isSingleTap(dx, dy),
-      onPanResponderMove: handlePanResponderMove,
+      onPanResponderGrant: handleResponderGrant,
+      onPanResponderMove: (_, { dx }) =>
+        handlePanResponderMove(_, { dx }, margin),
       onPanResponderTerminationRequest: (_, { dx }) =>
         isActuallySwiping(dx) ? false : true,
       onPanResponderTerminate: () => {
@@ -34,35 +47,47 @@ export function SwipeRow({
         resetMargins();
       },
       onPanResponderRelease: handleReleaseAction
-    })
-  );
+    });
+
+  const panResponder = useRef(getPanResponder(margin));
 
   const isSingleTap = (dx, dy) => dx === 0 && dy === 0;
 
   const isActuallySwiping = dx => Math.abs(dx) > 50;
 
-  function handlePanResponderMove(_, { dx, ...props }) {
-    console.log(props);
+  const isSwipingFromRight = dx => dx - margin.right < 0;
+
+  function handleResponderGrant() {
+    setCurrentRow({
+      name: `${store.storeName}-${item.name}`,
+      reset: resetMargins
+    });
+  }
+
+  function handlePanResponderMove(_, { dx }, margin) {
     if (isActuallySwiping(dx)) {
       setIsScrollEnabled(false);
     } else {
       setIsScrollEnabled(true);
     }
-    setMargins({
-      right: -dx + margin.right,
-      left: dx + margin.left
-    });
+    if (isSwipingFromRight(dx)) {
+      setMargins({
+        right: -dx - margin.right,
+        left: dx + margin.left
+      });
+    }
   }
 
-  function handleReleaseAction(_, gestureState) {
-    if (gestureState.dx < -275) {
-      rightButton.action({ store, item: item.name });
-    } else if (gestureState.dx < -50) {
-      setMargins({ right: 50, left: 0 });
+  function handleReleaseAction(_, { dx }) {
+    if (dx < -275) {
+      rightButton.action();
+    } else if (dx - margin.right < -25) {
+      setMargins({ right: 50, left: -50 });
     } else {
       resetMargins();
     }
     setIsScrollEnabled(true);
+    marginUpdater.current++;
   }
 
   function resetMargins() {
@@ -80,11 +105,7 @@ export function SwipeRow({
         {...panResponder.current.panHandlers}
       >
         <TouchableOpacity
-          style={{
-            ...styles.itemNameContainer,
-            flexShrink: 1,
-            zIndex: 10
-          }}
+          style={styles.itemNameContainer}
           onPress={() => console.log("foo")}
         >
           <Icon small name="ios-arrow-forward" style={styles.listIcon} />
@@ -93,14 +114,10 @@ export function SwipeRow({
         <View
           style={{
             ...styles.rightButton,
-            right: margin.right === 50 ? -325 : -375,
-
             backgroundColor: rightButton.color
           }}
         >
-          {rightButton.component({
-            action: () => rightButton.action({ store, item: item.name })
-          })}
+          {rightButton.component}
         </View>
       </View>
     </>
@@ -136,11 +153,11 @@ const styles = StyleSheet.create({
     color: COLORS.DARK_GRAY
   },
   rightButton: {
-    display: "flex",
-    flex: 1,
+    // display: "flex",
+    // flex: 1,
     zIndex: 1,
+    right: -375,
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "flex-start",
     width: "100%",
     height: "100%",
