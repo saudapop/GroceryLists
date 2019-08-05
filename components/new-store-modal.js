@@ -49,7 +49,7 @@ const ModalContent = ({ show, onCancel }) => {
       <Content contentContainerStyle={styles.contentContainer}>
         <View style={styles.mainView}>
           <View style={styles.formContainer}>
-            <Text style={{ color: COLORS.WHITE }}>Enter new store name:</Text>
+            <Text style={{ color: COLORS.WHITE }}>Enter new list name:</Text>
             <View style={styles.storeNameInput}>
               <TextInput
                 value={storeName}

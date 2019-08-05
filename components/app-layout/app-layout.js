@@ -39,14 +39,14 @@ export const AppFooter = ({ selectTab, currentTab, styles }) => (
         onPress={() => selectTab(TABS.CURRENT_LISTS)}
       >
         <Icon type="FontAwesome5" name="clipboard-list" />
-        <Text>Current list</Text>
+        <Text>Current lists</Text>
       </Button>
       <Button
         active={currentTab === TABS.ADD_NEW_STORE}
         onPress={() => selectTab(TABS.ADD_NEW_STORE)}
       >
-        <Icon type="FontAwesome5" name="store-alt" />
-        <Text>Add new store</Text>
+        <Icon type="FontAwesome5" name="plus" />
+        <Text>Add new list</Text>
       </Button>
       <Button
         active={currentTab === TABS.PREVIOUS_LISTS}

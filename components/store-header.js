@@ -75,20 +75,23 @@ const HeaderContent = ({
       onLeftAction && onLeftAction();
     }
     if (isRight) {
-      onLeftAction && onRightAction();
+      onLeftAction && headerButtons.rightAction && onRightAction();
     }
     setCurrentStore(store.storeName);
   }
 
   const onRightAction =
     headerButtons &&
+    headerButtons.rightAction &&
     headerButtons.rightAction({
       NewItemsContext,
-      component
+      component,
+      storeName: store.storeName
     });
 
   const onLeftAction =
     headerButtons &&
+    headerButtons.leftAction &&
     headerButtons.leftAction({
       NewItemsContext,
       component
@@ -123,8 +126,8 @@ const HeaderContent = ({
         rightOpenValue={-75}
         stopRightSwipe={-250}
         onRowOpen={handleRowOpen}
-        disableLeftSwipe={numberOfInputs === 0}
-        disableRightSwipe={numberOfInputs > 0}
+        // disableLeftSwipe={numberOfInputs === 0}
+        // disableRightSwipe={numberOfInputs > 0}
         right={<RightButton onPress={onRightAction} />}
         left={<LeftButton onPress={onLeftAction} />}
       />

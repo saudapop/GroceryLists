@@ -44,11 +44,12 @@ export default (DatabaseService = {
       initialState.currentUserId = user.id;
       const mongoClient = initialState.client.getServiceClient(
         RemoteMongoClient.factory,
-        "mongodb-atlas"
+        "MongoDB-Atlas"
       );
       initialState.db = mongoClient.db(DB_NAME);
       initialState.collection = initialState.db.collection(COLLECTION_NAME);
       initialState.stores = await initialState.collection.find({}).asArray();
+      console.log(initialState.stores.length);
       initialState.stores = initialState.stores.map(store => {
         return {
           ...store,
@@ -108,5 +109,15 @@ export default (DatabaseService = {
       { $set: newStore },
       { upsert: true }
     );
+  },
+
+  removeStore: async ({ state, storeName }) => {
+    try {
+      await state.collection.deleteOne({ storeName: storeName });
+      console.log(storeName, "Removed from stores list");
+    } catch (e) {
+      console.log(e);
+      alert("Darnit, something happend. Tell Saud about this: ", e);
+    }
   }
 });

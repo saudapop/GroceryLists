@@ -6,11 +6,15 @@ import { useCurrentRowState } from "GroceryLists/hooks/current-row-state";
 import { StoresLists } from "GroceryLists/components/stores-lists";
 
 const PreviousLists = () => {
-  const { updateItems } = useContext(StateContext);
+  const { updateItems, removeStore } = useContext(StateContext);
   const { setCurrentRow } = useCurrentRowState();
 
   function removeItemFromList({ store, item }) {
     updateItems({ store, items: [item] });
+  }
+
+  function handleRemoveStore({ storeName }) {
+    return () => removeStore({ storeName });
   }
 
   return (
@@ -26,6 +30,9 @@ const PreviousLists = () => {
         ),
         action: removeItemFromList,
         color: COLORS.SHARP_BLUE
+      }}
+      headerButtons={{
+        rightAction: handleRemoveStore
       }}
     />
   );

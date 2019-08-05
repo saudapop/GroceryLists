@@ -41,7 +41,7 @@ const useListReducer = () => {
     dispatch({ type: ACTIONS.SET_LOADING });
   };
 
-  const refresh = async () => {
+  const refresh = async (timeout = 1500) => {
     dispatch({ type: ACTIONS.SET_LOADING });
     const oldStores = state.stores;
     setTimeout(
@@ -50,7 +50,7 @@ const useListReducer = () => {
           updatedStores: await DatabaseService.fetchStores(state),
           oldStores
         }),
-      1500
+      timeout
     );
   };
 
@@ -65,6 +65,11 @@ const useListReducer = () => {
       updatedStores: await DatabaseService.fetchStores(state),
       oldStores
     });
+  };
+
+  const removeStore = async ({ storeName }) => {
+    await DatabaseService.removeStore({ state, storeName });
+    refresh(0);
   };
 
   const setCurrentStore = currentStore =>
@@ -98,7 +103,8 @@ const useListReducer = () => {
     setCurrentStore,
     toggleListExpanded,
     toggleAllListsExpanded,
-    selectTab
+    selectTab,
+    removeStore
   };
 };
 

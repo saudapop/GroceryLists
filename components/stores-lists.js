@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { sortBy } from "lodash";
-import { StyleSheet, View, RefreshControl } from "react-native";
+import { StyleSheet, View, RefreshControl, Text } from "react-native";
 import { Content } from "native-base";
 import { StateContext } from "GroceryLists/database-service/database-service";
 import { StoreHeader } from "GroceryLists/components/store-header";
@@ -82,7 +82,17 @@ const StoresLists = ({
       }
     >
       <View style={styles.storesListContainer}>
-        {state.stores && state.stores.length && content}
+        {state.stores && state.stores.length ? (
+          content
+        ) : (
+          <View style={styles.noItemsMessage}>
+            <Text style={styles.noItemsText}>
+              {`Click "Add New List" to get started! ${"\n\t\t\t\t..".repeat(
+                15
+              )}\n\t\t\t\tV`}
+            </Text>
+          </View>
+        )}
       </View>
     </Content>
   ) : (
@@ -96,6 +106,16 @@ const styles = StyleSheet.create({
   contentContainer: {
     marginBottom: 1,
     marginTop: 1
+  },
+  noItemsMessage: {
+    display: "flex",
+    marginTop: 250,
+    flex: 1,
+    justifyContent: "center",
+    alignSelf: "center"
+  },
+  noItemsText: {
+    color: COLORS.WHITE
   },
   storesListContainer: {
     flex: 1,
