@@ -1,4 +1,4 @@
-package com.grocerylists;
+package com.listables;
 
 import android.app.Application;
 

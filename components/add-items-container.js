@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Button as NbButton } from "native-base";
-import { NewItemField } from "GroceryLists/components/new-item-field";
-import { COLORS } from "GroceryLists/constants/colors";
+import { NewItemField } from "Listables/components/new-item-field";
+import { COLORS } from "Listables/constants/colors";
 
 export const AddItemsContainer = ({
   numberOfInputs,

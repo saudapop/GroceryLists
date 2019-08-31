@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { Button, Icon } from "native-base";
-import { StateContext } from "GroceryLists/database-service/database-service";
-import { COLORS } from "GroceryLists/constants/colors";
-import { useCurrentRowState } from "GroceryLists/hooks/current-row-state";
-import { StoresLists } from "GroceryLists/components/stores-lists";
+import { StateContext } from "Listables/database-service/database-service";
+import { COLORS } from "Listables/constants/colors";
+import { useCurrentRowState } from "Listables/hooks/current-row-state";
+import { StoresLists } from "Listables/components/stores-lists";
 
 const CurrentLists = () => {
   const { updateItems } = useContext(StateContext);

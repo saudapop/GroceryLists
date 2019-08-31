@@ -1,18 +1,18 @@
 import React, { useContext, useEffect } from "react";
 import { Root, Container } from "native-base";
 import { StyleSheet } from "react-native";
-import { StateContext } from "GroceryLists/database-service/database-service";
-import { useListReducer } from "GroceryLists/hooks/list-reducer";
-import { TABS } from "GroceryLists/constants/tabs";
-import { COLORS } from "GroceryLists/constants/colors";
-import { CurrentLists } from "GroceryLists/components/current-lists";
-import { PreviousLists } from "GroceryLists/components/previous-lists";
+import { StateContext } from "Listables/database-service/database-service";
+import { useListReducer } from "Listables/hooks/list-reducer";
+import { TABS } from "Listables/constants/tabs";
+import { COLORS } from "Listables/constants/colors";
+import { CurrentLists } from "Listables/components/current-lists";
+import { PreviousLists } from "Listables/components/previous-lists";
 
-import { NewStoreModal } from "GroceryLists/components/new-store-modal";
+import { NewStoreModal } from "Listables/components/new-store-modal";
 import {
   AppHeader,
   AppFooter
-} from "GroceryLists/components/app-layout/app-layout";
+} from "Listables/components/app-layout/app-layout";
 
 const App = () => {
   return (

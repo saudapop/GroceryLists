@@ -7,7 +7,7 @@ import {
   View
 } from "react-native";
 import { Icon } from "native-base";
-import { COLORS } from "GroceryLists/constants/colors";
+import { COLORS } from "Listables/constants/colors";
 
 export function SwipeRow({
   color,

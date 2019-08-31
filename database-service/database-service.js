@@ -4,13 +4,13 @@ import {
   AnonymousCredential,
   RemoteMongoClient
 } from "mongodb-stitch-react-native-sdk";
-import { TABS } from "GroceryLists/constants/tabs";
+import { TABS } from "Listables/constants/tabs";
 
 import {
   STITCH_APP_NAME,
   DB_NAME,
   COLLECTION_NAME
-} from "GroceryLists/constants/constants";
+} from "Listables/constants/constants";
 
 const blankState = {
   client: undefined,
@@ -27,7 +27,7 @@ const StateContext = React.createContext();
 
 export { blankState, StateContext };
 
-export default (DatabaseService = {
+export default DatabaseService = {
   fetchStores: async state => {
     const stores = await state.collection.find({}).asArray();
     return stores;
@@ -61,7 +61,7 @@ export default (DatabaseService = {
       return initialState;
     } catch (err) {
       console.log(err);
-      alert("WHOOPS! Tell Saud to fix this: " + err.message);
+      alert("WHOOPS! Something went wrong :( " + err.message);
     }
   },
 
@@ -117,7 +117,7 @@ export default (DatabaseService = {
       console.log(storeName, "Removed from stores list");
     } catch (e) {
       console.log(e);
-      alert("Darnit, something happend. Tell Saud about this: ", e);
+      alert("Yikes... something happend :/ : ", e);
     }
   }
-});
+};
