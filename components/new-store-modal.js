@@ -34,11 +34,13 @@ const ModalContent = ({ show, onCancel }) => {
   const onStoreCreate = () => {
     setLoading();
     updateItems({ store: { storeName }, items: newItemsList });
+    setStoreName("");
     clearList();
     onCancel();
   };
 
   const handleCancel = () => {
+    setStoreName("");
     clearList();
     onCancel();
   };

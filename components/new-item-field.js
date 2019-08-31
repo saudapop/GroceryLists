@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 import { Icon, Button } from "native-base";
 import { NewItemsContext } from "Listables/hooks/new-items-hooks";
@@ -13,10 +13,20 @@ export const NewItemField = () => {
   const listContainsItem = newItemsList.indexOf(userInput) > -1;
 
   const confirmItem = () => {
+    if (listContainsItem) {
+      alert("Ooops.. already added that! Try something else.");
+      setInput("");
+    }
     if (userInput && !listContainsItem) {
       setList([...newItemsList, userInput]);
     }
   };
+
+  useEffect(() => {
+    if (component && !component.isFocused() && !listContainsItem) {
+      setInput("");
+    }
+  });
   return (
     <View style={styles.container}>
       <TextInput
@@ -45,11 +55,13 @@ export const NewItemField = () => {
             danger
             onPress={() => {
               if (userInput) {
-                const listWithRemovedItem = newItemsList.filter(
-                  item => item !== userInput
-                );
+                if (listContainsItem) {
+                  const listWithRemovedItem = newItemsList.filter(
+                    item => item !== userInput
+                  );
+                  setList(listWithRemovedItem);
+                }
                 setInput("");
-                setList(listWithRemovedItem);
               }
             }}
             style={styles.actionButton}

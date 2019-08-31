@@ -61,7 +61,10 @@ export default DatabaseService = {
       return initialState;
     } catch (err) {
       console.log(err);
-      alert("WHOOPS! Something went wrong :( " + err.message);
+      alert(
+        "WHOOPS! Something went wrong :(...Try restarting the app'\n\n " +
+          err.message
+      );
     }
   },
 

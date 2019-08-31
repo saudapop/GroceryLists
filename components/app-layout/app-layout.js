@@ -16,7 +16,7 @@ export const AppHeader = ({ toggleAllListsExpanded, currentList, styles }) => (
   <Header iosBarStyle="light-content" style={styles.headerContainer}>
     <Icon style={styles.headerIcon} name="list" type="MaterialIcons" />
     <Body>
-      <Title style={styles.headerText}> My Listables</Title>
+      <Title style={styles.headerText}> My Listable</Title>
     </Body>
     <Icon
       style={styles.toggleListIcon}
