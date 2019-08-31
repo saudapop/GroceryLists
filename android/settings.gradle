@@ -1,3 +1,3 @@
-rootProject.name = 'GroceryLists'
+rootProject.name = 'Listables'
 
 include ':app'

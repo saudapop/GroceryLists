@@ -2,17 +2,17 @@ import React, { useContext, useState } from "react";
 import { sortBy } from "lodash";
 import { StyleSheet, View, RefreshControl, Text } from "react-native";
 import { Content } from "native-base";
-import { StateContext } from "GroceryLists/database-service/database-service";
-import { StoreHeader } from "GroceryLists/components/store-header";
-import { StoreItems } from "GroceryLists/components/store-items";
-import { LoadingSpinner } from "GroceryLists/components/loading-spinner";
-import { COLORS } from "GroceryLists/constants/colors";
-import { useCurrentRowState } from "GroceryLists/hooks/current-row-state";
+import { StateContext } from "Listables/database-service/database-service";
+import { StoreHeader } from "Listables/components/store-header";
+import { StoreItems } from "Listables/components/store-items";
+import { LoadingSpinner } from "Listables/components/loading-spinner";
+import { COLORS } from "Listables/constants/colors";
+import { useCurrentRowState } from "Listables/hooks/current-row-state";
 import {
   closeItemOnStoreSwipeHook,
   closeStoreOnItemSwipeHook
-} from "GroceryLists/hooks/auto-close-hooks";
-import { Fade } from "GroceryLists/animations/fade";
+} from "Listables/hooks/auto-close-hooks";
+import { Fade } from "Listables/animations/fade";
 
 const StoresLists = ({
   isActiveItems,

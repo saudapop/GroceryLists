@@ -35,12 +35,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.grocerylists",
+    package = "com.listables",
 )
 
 android_resource(
     name = "res",
-    package = "com.grocerylists",
+    package = "com.listables",
     res = "src/main/res",
 )
 

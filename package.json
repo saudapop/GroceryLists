@@ -1,5 +1,5 @@
 {
-  "name": "GroceryLists",
+  "name": "Listables",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,7 +10,8 @@
     "mongodb-stitch-react-native-sdk": "^4.4.0",
     "native-base": "^2.12.1",
     "react": "16.8.3",
-    "react-native": "0.59.8"
+    "react-native": "0.59.8",
+    "react-native-rename": "^2.4.1"
   },
   "devDependencies": {
     "@babel/core": "7.4.5",

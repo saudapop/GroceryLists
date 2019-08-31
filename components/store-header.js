@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Icon, Button as NbButton, SwipeRow } from "native-base";
-import { StateContext } from "GroceryLists/database-service/database-service";
+import { StateContext } from "Listables/database-service/database-service";
 import useNewItemsListReducer, {
   NewItemsContext
-} from "GroceryLists/hooks/new-items-hooks";
-import { AddItemsContainer } from "GroceryLists/components/add-items-container.js";
+} from "Listables/hooks/new-items-hooks";
+import { AddItemsContainer } from "Listables/components/add-items-container.js";
 import { COLORS } from "../constants/colors";
 
 export const StoreHeader = ({

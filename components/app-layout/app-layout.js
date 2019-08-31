@@ -10,17 +10,13 @@ import {
   Icon,
   Button
 } from "native-base";
-import { TABS } from "GroceryLists/constants/tabs";
+import { TABS } from "Listables/constants/tabs";
 
 export const AppHeader = ({ toggleAllListsExpanded, currentList, styles }) => (
   <Header iosBarStyle="light-content" style={styles.headerContainer}>
-    <Icon
-      style={styles.headerIcon}
-      name="local-grocery-store"
-      type="MaterialIcons"
-    />
+    <Icon style={styles.headerIcon} name="list" type="MaterialIcons" />
     <Body>
-      <Title style={styles.headerText}>Ahmed Family Grocery Lists</Title>
+      <Title style={styles.headerText}> My Listables</Title>
     </Body>
     <Icon
       style={styles.toggleListIcon}

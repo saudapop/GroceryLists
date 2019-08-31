@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 import { Icon, Button } from "native-base";
-import { NewItemsContext } from "GroceryLists/hooks/new-items-hooks";
-import { COLORS } from "GroceryLists/constants/colors";
+import { NewItemsContext } from "Listables/hooks/new-items-hooks";
+import { COLORS } from "Listables/constants/colors";
 
 export const NewItemField = () => {
   const [userInput, setInput] = useState("");

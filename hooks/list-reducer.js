@@ -1,7 +1,7 @@
 import { useReducer } from "react";
 import DatabaseService, {
   blankState
-} from "GroceryLists/database-service/database-service";
+} from "Listables/database-service/database-service";
 
 const listReducer = (state, action) => {
   switch (action.type) {

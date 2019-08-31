@@ -1,12 +1,12 @@
 import React, { useState, useContext } from "react";
 import { Text, Button, Content } from "native-base";
 import { StyleSheet, Modal, View, TextInput, ScrollView } from "react-native";
-import { StateContext } from "GroceryLists/database-service/database-service";
+import { StateContext } from "Listables/database-service/database-service";
 import useNewItemsListReducer, {
   NewItemsContext
-} from "GroceryLists/hooks/new-items-hooks";
-import { AddItemsContainer } from "GroceryLists/components/add-items-container.js";
-import { COLORS } from "GroceryLists/constants/colors";
+} from "Listables/hooks/new-items-hooks";
+import { AddItemsContainer } from "Listables/components/add-items-container.js";
+import { COLORS } from "Listables/constants/colors";
 
 export const NewStoreModal = props => {
   return (

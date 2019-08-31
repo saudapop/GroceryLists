@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { isEqual } from "lodash";
 import { StyleSheet, Text, FlatList, TouchableOpacity } from "react-native";
 import { Icon } from "native-base";
-import { COLORS } from "GroceryLists/constants/colors";
-import { Fade } from "GroceryLists/animations/fade";
-import { SwipeRow } from "GroceryLists/components/swipe-row.js";
+import { COLORS } from "Listables/constants/colors";
+import { Fade } from "Listables/animations/fade";
+import { SwipeRow } from "Listables/components/swipe-row.js";
 const StoreItems = ({
   store,
   items,
